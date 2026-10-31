@@ -32,8 +32,8 @@ def registrar_comandos_telegram():
         {"command": "foreversummons_equip", "description": "Pool Oficial y Objetos para Forever Summons"},
         {"command": "artsgen", "description": "Grupos completos de Arts Gen (Type A-F, EX)"},
         {"command": "crest", "description": "Crestas recomendadas para un Héroe"},
-        {"command": "crestrun", "description": "Dungeon de Crestas Activa HOY según el calendario"},
-        {"command": "teambuilder", "description": "Generador de Escuadrones por Jefe/Boss"},
+        {"command": "crestrun", "description": "Palace & Road Map Dungeons activos HOY"},
+        {"command": "teambuilder", "description": "Analizador de compatibilidad de 4 héroes"},
         {"command": "sync", "description": "Sincronizar con la Wiki oficial de GS"},
         {"command": "help", "description": "Menú principal de ayuda y comandos"}
     ]
@@ -62,7 +62,7 @@ def cargar_objetos():
             return [] 
     return []
 
-# Diccionario de Traducción de Términos Extendido
+# Diccionario de Traducción
 DICCIONARIO_TRADUCCION = {
     "When Equipped by": "Cuando lo equipa",
     "increases own DMG by": "aumenta el Daño propio en",
@@ -110,40 +110,47 @@ def traducir_habilidad(texto):
         txt = txt.replace(en, es)
     return txt
 
-# CALENDARIO OFICIAL DE CREST PALACE Y BOSSES DE LA APP
+# CALENDARIO OFICIAL DE CREST PALACE DE LA APP (CrestFarmGuideScreen.kt)
 CALENDARIO_CREST_PALACE = {
     0: { # Lunes
         "boss": "Oldeus (Oblivion)", "dia": "Lunes", "dificultad": "PRO",
+        "palace": "Shrine of Oblivion (Lunes)",
         "estrategia": "Solo recibe daño al ser Breakeado. Killer de Luz (400%). Inmune a Oscuridad.",
         "mvp": "Est, Duke, Platina Asc. (El DPS NO debe ser Oscuridad)."
     },
     1: { # Martes
         "boss": "Ignis (Crimson Sea)", "dia": "Martes", "dificultad": "EXTREME",
+        "palace": "Shrine of the Crimson Sea (Martes)",
         "estrategia": "Duran con Goblin Dagger es MVP. Stance de fuego con nukes masivos.",
         "mvp": "Duran + Goblin Dagger, Thetis, Kirisame."
     },
     2: { # Miércoles
         "boss": "Freydal (Diamond Dust)", "dia": "Miércoles", "dificultad": "EXTREME",
+        "palace": "Shrine of Diamond Dust (Miércoles)",
         "estrategia": "Storm Mode (Alta Evasión). Reset de Skill CT cada 10s. Killer de Agua.",
         "mvp": "Hajime Saito, Shion Santa, Saitama, Okarun."
     },
     3: { # Jueves
         "boss": "Elpneumas (Eternity)", "dia": "Jueves", "dificultad": "EXTREME",
+        "palace": "Shrine of Eternity (Jueves)",
         "estrategia": "Se oculta bajo tierra. Killer de Humanos. Negación de Agua y Magia.",
         "mvp": "Summer Miyu, Okarun, Konpaku Youmu (Quemar con objetos)."
     },
     4: { # Viernes
         "boss": "Fosradius (Adamantine)", "dia": "Viernes", "dificultad": "PRO",
+        "palace": "Shrine of Adamantine (Viernes)",
         "estrategia": "Inmune a Crítico. Faintea y drena Artes al 50%/20% HP.",
         "mvp": "OBLIGATORIO: Protección contra Parálisis + DPS Luz u Oscuridad."
     },
     5: { # Sábado
         "boss": "Subject γ-2 (Cursed Claw)", "dia": "Sábado", "dificultad": "EXTREME",
+        "palace": "Shrine of the Cursed Claw (Sábado)",
         "estrategia": "Requiere múltiples Breaks. Congela al 50%/25% HP.",
         "mvp": "OBLIGATORIO: Protección contra Congelación. Breaker: Chloe, Platina, Accelerator."
     },
     6: { # Domingo
         "boss": "Subject B-3 (Discordia)", "dia": "Domingo", "dificultad": "PRO",
+        "palace": "Shrine of Discordia (Domingo)",
         "estrategia": "Inmune a Magia. Drenaje inicial de 100 Artes. Faintea al HP más alto.",
         "mvp": "Okarun, War Hero Fen, Houka."
     }
@@ -237,13 +244,13 @@ def procesar_comando(chat_id, texto):
             "🔹 `/equipo [Nombre]` -> Stats, Cooldown y habilidades traducidas.\n"
             "🔹 `/foreversummons` -> Pool Oficial de Héroes Forever Summons.\n"
             "🔹 `/foreversummons_equip` -> Pool Oficial de Objetos Forever Summons.\n"
-            "🔹 `/artsgen` -> Clasificación COMPLETA por Grupos de Arts Gen (Type A-F).\n"
-            "🔹 `/crest [Nombre]` -> Recomendación de Crestas para un Héroe.\n"
-            "🔹 `/crestrun` -> Dungeon y Boss de Crestas activo HOY.\n"
-            "🔹 `/teambuilder [Boss]` -> Escuadrón Táctico por Jefe/Misión.\n"
+            "🔹 `/artsgen [Grupo]` -> Lista COMPLETA por Grupos de Arts Gen (Type A-F).\n"
+            "🔹 `/crest [Héroe]` -> Recomendación de Crestas para un Héroe.\n"
+            "🔹 `/crestrun` -> Dungeons y Bosses de Crestas ACTIVOS HOY.\n"
+            "🔹 `/teambuilder [Héroe1, Héroe2, ...]` -> Analizador de Sinergia y Overlaps.\n"
             "🔹 `/guia [Misión]` -> Guías comunitarias de la app.\n"
             "🔹 `/sync` -> Sincronización en vivo con la Wiki oficial.\n\n"
-            "💡 *Ejemplo*: `/unidad Shirou` o `/crestrun`"
+            "💡 *Ejemplo*: `/teambuilder Shirou, WH Fen, Chloe, Thetis`"
         )
         enviar_mensaje_telegram(chat_id, menu_text)
         return
@@ -299,16 +306,16 @@ def procesar_comando(chat_id, texto):
         enviar_crest_recomendacion(chat_id, query)
         return
 
-    # CALENDARIO CREST PALACE HOY
+    # CALENDARIO CREST PALACE Y ROAD MAP HOY
     if texto_lower in ["/crestrun", "/road", "!crestrun", "crestrun"]:
         enviar_crest_palace_hoy(chat_id)
         return
 
-    # TEAM BUILDER
+    # TEAM BUILDER DE COMPATIBILIDAD
     if texto_lower.startswith("/teambuilder") or texto_lower.startswith("/team") or texto_lower.startswith("teambuilder"):
         partes = texto.split(maxsplit=1)
         query = partes[1].strip() if len(partes) > 1 else ""
-        enviar_teambuilder(chat_id, query)
+        enviar_teambuilder_evaluador(chat_id, query)
         return
 
     # SINCRONIZACIÓN AUTOMÁTICA
@@ -748,7 +755,7 @@ def enviar_crest_recomendacion(chat_id, nombre=""):
             "🔮 *MÓDULO DE CRESTAS Y PALACIO DE CRESTAS* 🔮\n\n"
             "Usa el comando `/crest [Nombre]` para ver las crestas óptimas de un personaje.\n"
             "💡 *Ejemplo*: `/crest Shirou` o `/crest Fen`\n\n"
-            "Escribe `/crestrun` para ver las Dungeons de Crestas activas hoy."
+            "Escribe `/crestrun` para ver las Dungeons de Crestas activas HOY."
         )
         enviar_mensaje_telegram(chat_id, msg)
         return
@@ -779,43 +786,127 @@ def enviar_crest_palace_hoy(chat_id):
 
     msg = (
         f"🏰 *CALENDARIO TÁCTICO CREST PALACE: DÍA {info_today['dia'].upper()}* 🏰\n\n"
-        f"⚔️ *Jefe Activo Hoy*: {info_today['boss']}\n"
+        f"📍 *Palacio Activo Hoy*: {info_today['palace']}\n"
+        f"⚔️ *Jefe Activo*: {info_today['boss']}\n"
         f"📊 *Dificultad*: {info_today['dificultad']}\n\n"
         f"📝 *Estrategia Técnica*:\n{info_today['estrategia']}\n\n"
         f"🌟 *MVP / Héroes Recomendados*:\n{info_today['mvp']}\n\n"
-        f"💡 *Tip del Líder*: La unidad en la posición 1 (Líder) es la que recibe la Cresta al ganar."
+        f"💡 *Regla del Líder*: La unidad en la posición 1 (Líder) es quien recibe el drop de la Cresta al ganar."
     )
     enviar_mensaje_telegram(chat_id, msg)
 
 
-def enviar_teambuilder(chat_id, query=""):
-    bosses_populares = ["Palace of Trials 30F", "Dungeon of Trials F26", "Ignis", "Freydal", "Elpneumas", "Fosradius", "Wilkes"]
-    
-    if not query:
+def enviar_teambuilder_evaluador(chat_id, query_unidades=""):
+    if not query_unidades:
         msg = (
-            "⚔️ *TEAM BUILDER AUTOMÁTICO GSVIEWER* ⚔️\n\n"
-            "Escribe `/teambuilder [Boss o Misión]` para generar un escuadrón táctico sugerido.\n\n"
-            "🎯 *Jefes / Misiones Populares*:\n" +
-            "\n".join([f"  • `/team {b}`" for b in bosses_populares]) + "\n\n"
-            "🛡️ *Escuadrón General Meta*:\n"
-            "  1. Shirou Emiya (Tanque / Mitigación)\n"
-            "  2. War Hero Fen (Arts Gen / Sub-DPS)\n"
-            "  3. Summer Juno (Arts Gen / Support)\n"
-            "  4. Chloe (DPS / Breaker)"
+            "⚔️ *TEAM BUILDER: ANALIZADOR DE COMPATIBILIDAD (GSVIEWER)* ⚔️\n\n"
+            "Ingresa los nombres de **2 a 4 héroes** (separados por coma) para evaluar su compatibilidad:\n"
+            "💡 *Ejemplo*: `/teambuilder Shirou, WH Fen, Thetis, Chloe`\n\n"
+            "El analizador verificará:\n"
+            "  • ⚡ *Overlaps de Arts Gen* (Grupos Type A-F que no apilan).\n"
+            "  • 🛡️ *Estructura de Roles* (Tanque, Batería, Buffer, DPS/Breaker).\n"
+            "  • 🔥 *Sinergias de Elemento y Raza*.\n"
+            "  • 📊 *Veredicto Táctico*: Qué funciona y qué NO funciona."
         )
         enviar_mensaje_telegram(chat_id, msg)
         return
 
-    msg = (
-        f"⚔️ *TEAM BUILDER AUTOMÁTICO PARA: {query.upper()}* ⚔️\n\n"
-        f"🎯 *Formación Recomendada*:\n"
-        f"  1. 🛡️ *Tanque / Mitigación*: Shirou Emiya / Thetis\n"
-        f"  2. ⚡ *Arts Gen Principal*: War Hero Fen / Houka\n"
-        f"  3. 🔮 *Arts Gen Secundario*: Summer Juno / Rosetta\n"
-        f"  4. 💥 *DPS / Sub-Debuffer*: Chloe / Liza\n\n"
-        f"🎒 *Mesa de Equipamiento*: 4 Objetos de Soporte ★5, 2 de Defensa ★5, 2 de Curación ★4+."
-    )
-    enviar_mensaje_telegram(chat_id, msg)
+    # Separar nombres
+    if "," in query_unidades:
+        nombres = [n.strip() for n in query_unidades.split(",") if n.strip()]
+    else:
+        nombres = [n.strip() for n in query_unidades.split() if n.strip()]
+
+    unidades_db = cargar_personajes()
+    equipo_encontrado = []
+    no_encontrados = []
+
+    for nom_input in nombres:
+        nom_norm = nom_input.lower()
+        match = next((u for u in unidades_db if isinstance(u, dict) and (nom_norm in u.get("nombre", "").lower() or nom_norm in u.get("nombre_original", "").lower())), None)
+        if match:
+            if match not in equipo_encontrado:
+                equipo_encontrado.append(match)
+        else:
+            no_encontrados.append(nom_input)
+
+    if not equipo_encontrado:
+        enviar_mensaje_telegram(chat_id, f"🔍 No encontré a ninguno de los héroes especificados: *{', '.join(no_encontrados)}*.")
+        return
+
+    que_funciona = []
+    que_no_funciona = []
+    grupos_arts = {}
+
+    # 1. Chequeo de Arts Gen Overlap
+    for u in equipo_encontrado:
+        ag = u.get("arts_gen_type", "None")
+        if ag and ag != "None":
+            grupos_arts.setdefault(ag, []).append(u.get("nombre"))
+
+    for g_type, members in grupos_arts.items():
+        if len(members) > 1:
+            que_no_funciona.append(f"⚠️ *CONFLICTO DE ARTS GEN (Type {g_type})*: {', '.join(members)} pertenecen al mismo grupo y **NO acumulan su recarga constante de Arts entre sí**.")
+        else:
+            que_funciona.append(f"⚡ *Arts Gen Type {g_type}*: {members[0]} otorga energía constante sin conflictos.")
+
+    # 2. Chequeo de Roles
+    tanques = []
+    baterias = []
+    dps_breakers = []
+
+    for u in equipo_encontrado:
+        r = str(u.get("rol", "")).lower()
+        t = str(u.get("tags", [])).lower()
+        n = u.get("nombre")
+
+        if "defensa" in r or "tanque" in r or "taunt" in t:
+            tanques.append(n)
+        if "soporte" in r or "batería" in t or u.get("arts_gen_type") != "None":
+            baterias.append(n)
+        if "ataque" in r or "dps" in r or "breaker" in r or "break" in t:
+            dps_breakers.append(n)
+
+    if tanques:
+        que_funciona.append(f"🛡️ *Protección Defensiva*: {', '.join(tanques)} brinda mitigación/barreras para supervivencia.")
+    else:
+        que_no_funciona.append("⚠️ *Falta Tanque / Mitigación*: El equipo no cuenta con un tanque dedicado (Shirou/Kirisame/Thetis) para misiones de alto daño.")
+
+    if baterias:
+        que_funciona.append(f"🔋 *Generación de Artes*: {', '.join(baterias)} garantiza flujo constante de energía.")
+    else:
+        que_no_funciona.append("⚠️ *Falta Batería de Arts*: El equipo carece de un generador masivo de Arts (WH Fen/Hart/Houka/Liza).")
+
+    if dps_breakers:
+        que_funciona.append(f"💥 *Daño y Break*: {', '.join(dps_breakers)} aporta la potencia ofensiva del grupo.")
+
+    elementos = [u.get("elemento") for u in equipo_encontrado if u.get("elemento")]
+    if len(set(elementos)) == 1 and len(equipo_encontrado) >= 3:
+        que_funciona.append(f"🔥 *Mono-Elemento ({elementos[0]})*: Gran sinergia para aprovechar buffers elementales del mismo elemento.")
+
+    equipo_nombres_str = "\n".join([f"  • Posición {idx+1}: *{u.get('nombre')}* ({u.get('elemento')}) - Tier {u.get('tier', 'N/A')}" for idx, u in enumerate(equipo_encontrado)])
+
+    msg = [
+        f"⚔️ *ANALIZADOR DE ESQUADRÓN TEAM BUILDER ({len(equipo_encontrado)} Héroes)* ⚔️\n",
+        f"🛡️ *Composición Evaluada*:\n{equipo_nombres_str}\n"
+    ]
+
+    if no_encontrados:
+        msg.append(f"❓ *No encontrados*: {', '.join(no_encontrados)}\n")
+
+    msg.append("✅ *LO QUE SÍ FUNCIONA (PUNTOS FUERTES)*:")
+    if que_funciona:
+        msg.append("\n".join([f"  • {f}" for f in que_funciona]))
+    else:
+        msg.append("  • Formación básica sin sinergias destacadas.")
+
+    msg.append("\n⚠️ *LO QUE NO FUNCIONA (CONFLICTOS Y DÉFICITS)*:")
+    if que_no_funciona:
+        msg.append("\n".join([f"  • {nf}" for nf in que_no_funciona]))
+    else:
+        msg.append("  • ¡Excelente! No se detectaron conflictos de Arts Gen ni faltas de roles principales.")
+
+    enviar_mensaje_telegram(chat_id, "\n".join(msg))
 
 
 if __name__ == "__main__": 
