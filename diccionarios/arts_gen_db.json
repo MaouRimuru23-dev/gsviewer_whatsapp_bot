@@ -1,0 +1,1939 @@
+[
+  {
+    "id": "101016411",
+    "name": "Rayas",
+    "name_jp": "Rayas",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_101016411.webp",
+    "arts_gen": "EX1",
+    "details": [
+      {
+        "type": "EX1",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "101056311",
+    "name": "Fen (Earth)",
+    "name_jp": "Fen (Earth)",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_101056311.webp",
+    "arts_gen": "A",
+    "details": [
+      {
+        "type": "A",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "101196312",
+    "name": "Ashe Toto",
+    "name_jp": "Ashe Toto",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_101196312.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "101216512",
+    "name": "Zenon",
+    "name_jp": "Zenon",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_101216512.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "A"
+      }
+    ]
+  },
+  {
+    "id": "101256512",
+    "name": "Leon",
+    "name_jp": "Leon",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_101256512.webp",
+    "arts_gen": "C",
+    "details": [
+      {
+        "type": "C",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "101276412",
+    "name": "Zechsia",
+    "name_jp": "Zechsia",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_101276412.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "101396112",
+    "name": "Lione",
+    "name_jp": "Lione",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_101396112.webp",
+    "arts_gen": "I",
+    "details": [
+      {
+        "type": "I",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "101666212",
+    "name": "Nies",
+    "name_jp": "Nies",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_101666212.webp",
+    "arts_gen": "EX2",
+    "details": [
+      {
+        "type": "EX2",
+        "source": "A"
+      }
+    ]
+  },
+  {
+    "id": "101706512",
+    "name": "Dahlia",
+    "name_jp": "Dahlia",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_101706512.webp",
+    "arts_gen": "EX1",
+    "details": [
+      {
+        "type": "EX1",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "101876412",
+    "name": "Sonije",
+    "name_jp": "Sonije",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_101876412.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "A"
+      }
+    ]
+  },
+  {
+    "id": "101916512",
+    "name": "Coco",
+    "name_jp": "Coco",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_101916512.webp",
+    "arts_gen": "EX1",
+    "details": [
+      {
+        "type": "EX1",
+        "source": "P"
+      }
+    ]
+  },
+  {
+    "id": "102016212",
+    "name": "Zeela",
+    "name_jp": "Zeela",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_102016212.webp",
+    "arts_gen": "EX2",
+    "details": [
+      {
+        "type": "EX2",
+        "source": "S"
+      }
+    ]
+  },
+  {
+    "id": "102066312",
+    "name": "Norn",
+    "name_jp": "Norn",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_102066312.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "102176312",
+    "name": "Kane (Earth)",
+    "name_jp": "Kane (Earth)",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_102176312.webp",
+    "arts_gen": "EX1",
+    "details": [
+      {
+        "type": "EX1",
+        "source": "S"
+      }
+    ]
+  },
+  {
+    "id": "102206412",
+    "name": "Mako Mankanshoku",
+    "name_jp": "Mako Mankanshoku",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_102206412.webp",
+    "arts_gen": "EX2",
+    "details": [
+      {
+        "type": "EX2",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "102286212",
+    "name": "Lozze",
+    "name_jp": "Lozze",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_102286212.webp",
+    "arts_gen": "A",
+    "details": [
+      {
+        "type": "A",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "102306212",
+    "name": "Alvina",
+    "name_jp": "Alvina",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_102306212.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "102316212",
+    "name": "Palamicia",
+    "name_jp": "Palamicia",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_102316212.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "102396312",
+    "name": "Mira (Earth)",
+    "name_jp": "Mira (Earth)",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_102396312.webp",
+    "arts_gen": "EX2",
+    "details": [
+      {
+        "type": "EX2",
+        "source": "S"
+      }
+    ]
+  },
+  {
+    "id": "102486112",
+    "name": "Berwick",
+    "name_jp": "Berwick",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_102486112.webp",
+    "arts_gen": "D",
+    "details": [
+      {
+        "type": "D",
+        "source": "A"
+      }
+    ]
+  },
+  {
+    "id": "102546512",
+    "name": "Celia (Dark)",
+    "name_jp": "Celia (Dark)",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_102546512.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "102556211",
+    "name": "Vitz",
+    "name_jp": "Vitz",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_102556211.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "102566312",
+    "name": "Maquiness",
+    "name_jp": "Maquiness",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_102566312.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "A"
+      }
+    ]
+  },
+  {
+    "id": "102586112",
+    "name": "Kurt",
+    "name_jp": "Kurt",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_102586112.webp",
+    "arts_gen": "EX1",
+    "details": [
+      {
+        "type": "EX1",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "102616512",
+    "name": "Lygor",
+    "name_jp": "Lygor",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_102616512.webp",
+    "arts_gen": "C",
+    "details": [
+      {
+        "type": "C",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "102636412",
+    "name": "Shasha",
+    "name_jp": "Shasha",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_102636412.webp",
+    "arts_gen": "EX2",
+    "details": [
+      {
+        "type": "EX2",
+        "source": "S"
+      }
+    ]
+  },
+  {
+    "id": "102666112",
+    "name": "Swordsman Berwick",
+    "name_jp": "Swordsman Berwick",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_102666112.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "A"
+      }
+    ]
+  },
+  {
+    "id": "102676212",
+    "name": "Rosetta (Water)",
+    "name_jp": "Rosetta (Water)",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_102676212.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "102756512",
+    "name": "Fen (Dark)",
+    "name_jp": "Fen (Dark)",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_102756512.webp",
+    "arts_gen": "A",
+    "details": [
+      {
+        "type": "A",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "102796212",
+    "name": "Cynthia",
+    "name_jp": "Cynthia",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_102796212.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "102846412",
+    "name": "Shiki",
+    "name_jp": "Shiki",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_102846412.webp",
+    "arts_gen": "EX2",
+    "details": [
+      {
+        "type": "EX2",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "102896112",
+    "name": "Tamae",
+    "name_jp": "Tamae",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_102896112.webp",
+    "arts_gen": "C",
+    "details": [
+      {
+        "type": "C",
+        "source": "A"
+      }
+    ]
+  },
+  {
+    "id": "102986312",
+    "name": "Cestina (Earth)",
+    "name_jp": "Cestina (Earth)",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_102986312.webp",
+    "arts_gen": "D",
+    "details": [
+      {
+        "type": "D",
+        "source": "XA"
+      }
+    ]
+  },
+  {
+    "id": "102996112",
+    "name": "Radak",
+    "name_jp": "Radak",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_102996112.webp",
+    "arts_gen": "D",
+    "details": [
+      {
+        "type": "D",
+        "source": "XA"
+      }
+    ]
+  },
+  {
+    "id": "103006412",
+    "name": "Liza",
+    "name_jp": "Liza",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103006412.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "A"
+      }
+    ]
+  },
+  {
+    "id": "103046512",
+    "name": "Luahn",
+    "name_jp": "Luahn",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103046512.webp",
+    "arts_gen": "EX1",
+    "details": [
+      {
+        "type": "EX1",
+        "source": "XA"
+      }
+    ]
+  },
+  {
+    "id": "103056511",
+    "name": "Chloe (GS)",
+    "name_jp": "Chloe (GS)",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103056511.webp",
+    "arts_gen": "EX1",
+    "details": [
+      {
+        "type": "EX1",
+        "source": "XA"
+      }
+    ]
+  },
+  {
+    "id": "103086512",
+    "name": "Bakoo",
+    "name_jp": "Bakoo",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103086512.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "103116112",
+    "name": "Sumire",
+    "name_jp": "Sumire",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103116112.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "103196112",
+    "name": "Marika",
+    "name_jp": "Marika",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103196112.webp",
+    "arts_gen": "EX2",
+    "details": [
+      {
+        "type": "EX2",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "103206412",
+    "name": "Noel",
+    "name_jp": "Noel",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103206412.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "A"
+      }
+    ]
+  },
+  {
+    "id": "103226412",
+    "name": "Juno",
+    "name_jp": "Juno",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103226412.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "103276312",
+    "name": "Hart (Earth)",
+    "name_jp": "Hart (Earth)",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103276312.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "103386312",
+    "name": "Summer Leone",
+    "name_jp": "Summer Leone",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103386312.webp",
+    "arts_gen": "EX2",
+    "details": [
+      {
+        "type": "EX2",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "103416212",
+    "name": "Priscilla (Water)",
+    "name_jp": "Priscilla (Water)",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103416212.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "103426412",
+    "name": "Emperor Isliid",
+    "name_jp": "Emperor Isliid",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103426412.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "103496212",
+    "name": "Mizuki the Twelfth",
+    "name_jp": "Mizuki the Twelfth",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103496212.webp",
+    "arts_gen": "F",
+    "details": [
+      {
+        "type": "F",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "103576512",
+    "name": "Riviera (Dark)",
+    "name_jp": "Riviera (Dark)",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103576512.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "TA"
+      },
+      {
+        "type": "EX2",
+        "source": "P"
+      }
+    ]
+  },
+  {
+    "id": "103596112",
+    "name": "Summer Cestina",
+    "name_jp": "Summer Cestina",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103596112.webp",
+    "arts_gen": "F",
+    "details": [
+      {
+        "type": "F",
+        "source": "A"
+      }
+    ]
+  },
+  {
+    "id": "103617312",
+    "name": "War Hero Fen",
+    "name_jp": "War Hero Fen",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103617312.webp",
+    "arts_gen": "A",
+    "details": [
+      {
+        "type": "A",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "103647412",
+    "name": "Sublime Supernova Liza",
+    "name_jp": "Sublime Supernova Liza",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103647412.webp",
+    "arts_gen": "G",
+    "details": [
+      {
+        "type": "G",
+        "source": "S"
+      }
+    ]
+  },
+  {
+    "id": "103657112",
+    "name": "Noble Flare Mira",
+    "name_jp": "Noble Flare Mira",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103657112.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "103667412",
+    "name": "Valentines Miranda",
+    "name_jp": "Valentines Miranda",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103667412.webp",
+    "arts_gen": "EX1",
+    "details": [
+      {
+        "type": "EX1",
+        "source": "S"
+      }
+    ]
+  },
+  {
+    "id": "103677112",
+    "name": "Valentines Priscilla",
+    "name_jp": "Valentines Priscilla",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103677112.webp",
+    "arts_gen": "F",
+    "details": [
+      {
+        "type": "F",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "103687212",
+    "name": "Aristela Orbis",
+    "name_jp": "Aristela Orbis",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103687212.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "A"
+      }
+    ]
+  },
+  {
+    "id": "103707212",
+    "name": "Jay",
+    "name_jp": "Jay",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103707212.webp",
+    "arts_gen": "EX3",
+    "details": [
+      {
+        "type": "EX3",
+        "source": "SA"
+      }
+    ]
+  },
+  {
+    "id": "103717212",
+    "name": "Canaria",
+    "name_jp": "Canaria",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103717212.webp",
+    "arts_gen": "EX1",
+    "details": [
+      {
+        "type": "EX1",
+        "source": "A"
+      }
+    ]
+  },
+  {
+    "id": "103727112",
+    "name": "Summer Iris",
+    "name_jp": "Summer Iris",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103727112.webp",
+    "arts_gen": "D",
+    "details": [
+      {
+        "type": "D",
+        "source": "SA"
+      }
+    ]
+  },
+  {
+    "id": "103736212",
+    "name": "Summer Fen",
+    "name_jp": "Summer Fen",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103736212.webp",
+    "arts_gen": "EX1",
+    "details": [
+      {
+        "type": "EX1",
+        "source": "SA"
+      }
+    ]
+  },
+  {
+    "id": "103747112",
+    "name": "Summer Riviera",
+    "name_jp": "Summer Riviera",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103747112.webp",
+    "arts_gen": "G",
+    "details": [
+      {
+        "type": "G",
+        "source": "S"
+      }
+    ]
+  },
+  {
+    "id": "103757512",
+    "name": "Summer Rosetta",
+    "name_jp": "Summer Rosetta",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103757512.webp",
+    "arts_gen": "F",
+    "details": [
+      {
+        "type": "F",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "103797512",
+    "name": "Halloween Forte",
+    "name_jp": "Halloween Forte",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103797512.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "TA"
+      },
+      {
+        "type": "EX1",
+        "source": "S"
+      }
+    ]
+  },
+  {
+    "id": "103807412",
+    "name": "Isliid, Human Pinnacle",
+    "name_jp": "Isliid, Human Pinnacle",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103807412.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "103817312",
+    "name": "Anti-Heroine Pola",
+    "name_jp": "Anti-Heroine Pola",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103817312.webp",
+    "arts_gen": "F",
+    "details": [
+      {
+        "type": "F",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "103827212",
+    "name": "Ultimate Paladin Roy",
+    "name_jp": "Ultimate Paladin Roy",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103827212.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "SA"
+      }
+    ]
+  },
+  {
+    "id": "103847512",
+    "name": "Hart the Fabricator",
+    "name_jp": "Hart the Fabricator",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103847512.webp",
+    "arts_gen": "EX1",
+    "details": [
+      {
+        "type": "EX1",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "103857312",
+    "name": "Valentines Liza",
+    "name_jp": "Valentines Liza",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103857312.webp",
+    "arts_gen": "EX1",
+    "details": [
+      {
+        "type": "EX1",
+        "source": "S"
+      }
+    ]
+  },
+  {
+    "id": "103867212",
+    "name": "Valentines Cestina",
+    "name_jp": "Valentines Cestina",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103867212.webp",
+    "arts_gen": "EX1",
+    "details": [
+      {
+        "type": "EX1",
+        "source": "S"
+      }
+    ]
+  },
+  {
+    "id": "103997512",
+    "name": "Dragon Authority Luahn",
+    "name_jp": "Dragon Authority Luahn",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_103997512.webp",
+    "arts_gen": "C",
+    "details": [
+      {
+        "type": "C",
+        "source": "S"
+      }
+    ]
+  },
+  {
+    "id": "104077112",
+    "name": "Menas",
+    "name_jp": "Menas",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_104077112.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "A"
+      },
+      {
+        "type": "D",
+        "source": "A"
+      }
+    ]
+  },
+  {
+    "id": "104087212",
+    "name": "Rosetta, Forger of Fortitude",
+    "name_jp": "Rosetta, Forger of Fortitude",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_104087212.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "104107212",
+    "name": "Selia, Sourcescript Witch",
+    "name_jp": "Selia, Sourcescript Witch",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_104107212.webp",
+    "arts_gen": "F",
+    "details": [
+      {
+        "type": "F",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "104137512",
+    "name": "Zephyr",
+    "name_jp": "Zephyr",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_104137512.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "TA"
+      },
+      {
+        "type": "EX1",
+        "source": "A"
+      }
+    ]
+  },
+  {
+    "id": "104147312",
+    "name": "Shaula",
+    "name_jp": "Shaula",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_104147312.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "104177412",
+    "name": "World's End Leone",
+    "name_jp": "World's End Leone",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_104177412.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "TA"
+      },
+      {
+        "type": "H",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "104197212",
+    "name": "Henrietta",
+    "name_jp": "Henrietta",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_104197212.webp",
+    "arts_gen": "A",
+    "details": [
+      {
+        "type": "A",
+        "source": "A"
+      },
+      {
+        "type": "C",
+        "source": "A"
+      }
+    ]
+  },
+  {
+    "id": "104247412",
+    "name": "Guild Master Rayas",
+    "name_jp": "Guild Master Rayas",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_104247412.webp",
+    "arts_gen": "EX2",
+    "details": [
+      {
+        "type": "EX2",
+        "source": "P"
+      }
+    ]
+  },
+  {
+    "id": "104257112",
+    "name": "Jayn",
+    "name_jp": "Jayn",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_104257112.webp",
+    "arts_gen": "EX2",
+    "details": [
+      {
+        "type": "EX2",
+        "source": "P"
+      }
+    ]
+  },
+  {
+    "id": "104267212",
+    "name": "Mizuki the 12th, Seven Heavens Armor",
+    "name_jp": "Mizuki the 12th, Seven Heavens Armor",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_104267212.webp",
+    "arts_gen": "F",
+    "details": [
+      {
+        "type": "F",
+        "source": "A"
+      }
+    ]
+  },
+  {
+    "id": "104317212",
+    "name": "Azurite",
+    "name_jp": "Azurite",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_104317212.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "SA"
+      },
+      {
+        "type": "H",
+        "source": "SA"
+      }
+    ]
+  },
+  {
+    "id": "104337112",
+    "name": "Summer Lotte & Valerie",
+    "name_jp": "Summer Lotte & Valerie",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_104337112.webp",
+    "arts_gen": "I",
+    "details": [
+      {
+        "type": "I",
+        "source": "A"
+      }
+    ]
+  },
+  {
+    "id": "104327112",
+    "name": "Celesta",
+    "name_jp": "Celesta",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_104327112.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "104357512",
+    "name": "Onyx",
+    "name_jp": "Onyx",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_104357512.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "A"
+      }
+    ]
+  },
+  {
+    "id": "104377312",
+    "name": "Wolfrid",
+    "name_jp": "Wolfrid",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_104377312.webp",
+    "arts_gen": "EX1",
+    "details": [
+      {
+        "type": "EX1",
+        "source": "P"
+      }
+    ]
+  },
+  {
+    "id": "107076412",
+    "name": "Saitama",
+    "name_jp": "Saitama",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107076412.webp",
+    "arts_gen": "EX1",
+    "details": [
+      {
+        "type": "EX1",
+        "source": "A"
+      }
+    ]
+  },
+  {
+    "id": "107086512",
+    "name": "Genos",
+    "name_jp": "Genos",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107086512.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "A"
+      }
+    ]
+  },
+  {
+    "id": "107156212",
+    "name": "Rimuru (Human form)",
+    "name_jp": "Rimuru (Human form)",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107156212.webp",
+    "arts_gen": "E",
+    "details": [
+      {
+        "type": "E",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "107166112",
+    "name": "Milim",
+    "name_jp": "Milim",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107166112.webp",
+    "arts_gen": "EX1",
+    "details": [
+      {
+        "type": "EX1",
+        "source": "A"
+      }
+    ]
+  },
+  {
+    "id": "107186512",
+    "name": "Goblin Slayer",
+    "name_jp": "Goblin Slayer",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107186512.webp",
+    "arts_gen": "EX3",
+    "details": [
+      {
+        "type": "EX3",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "107216512",
+    "name": "Sonic",
+    "name_jp": "Sonic",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107216512.webp",
+    "arts_gen": "EX1",
+    "details": [
+      {
+        "type": "EX1",
+        "source": "A"
+      }
+    ]
+  },
+  {
+    "id": "107286212",
+    "name": "Melty",
+    "name_jp": "Melty",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107286212.webp",
+    "arts_gen": "E",
+    "details": [
+      {
+        "type": "E",
+        "source": "A"
+      }
+    ]
+  },
+  {
+    "id": "107606312",
+    "name": "Fitoria",
+    "name_jp": "Fitoria",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107606312.webp",
+    "arts_gen": "G",
+    "details": [
+      {
+        "type": "G",
+        "source": "S"
+      }
+    ]
+  },
+  {
+    "id": "107296212",
+    "name": "Yusuke",
+    "name_jp": "Yusuke",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107296212.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "107316312",
+    "name": "Kurama",
+    "name_jp": "Kurama",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107316312.webp",
+    "arts_gen": "B",
+    "details": [
+      {
+        "type": "B",
+        "source": "A"
+      }
+    ]
+  },
+  {
+    "id": "107356212",
+    "name": "Rem (Re:Zero)",
+    "name_jp": "Rem (Re:Zero)",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107356212.webp",
+    "arts_gen": "EX3",
+    "details": [
+      {
+        "type": "EX3",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "107396212",
+    "name": "Santa Rimuru",
+    "name_jp": "Santa Rimuru",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107396212.webp",
+    "arts_gen": "EX2",
+    "details": [
+      {
+        "type": "EX2",
+        "source": "S"
+      }
+    ]
+  },
+  {
+    "id": "107406112",
+    "name": "Santa Milim",
+    "name_jp": "Santa Milim",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107406112.webp",
+    "arts_gen": "E",
+    "details": [
+      {
+        "type": "E",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "107456212",
+    "name": "Hatsune Miku",
+    "name_jp": "Hatsune Miku",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107456212.webp",
+    "arts_gen": "E",
+    "details": [
+      {
+        "type": "E",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "107466312",
+    "name": "Sakura Miku",
+    "name_jp": "Sakura Miku",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107466312.webp",
+    "arts_gen": "E",
+    "details": [
+      {
+        "type": "E",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "107476112",
+    "name": "Yoh Asakura",
+    "name_jp": "Yoh Asakura",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107476112.webp",
+    "arts_gen": "E",
+    "details": [
+      {
+        "type": "E",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "107566412",
+    "name": "Lucy Heartfilia",
+    "name_jp": "Lucy Heartfilia",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107566412.webp",
+    "arts_gen": "E",
+    "details": [
+      {
+        "type": "E",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "107636412",
+    "name": "Draken",
+    "name_jp": "Draken",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107636412.webp",
+    "arts_gen": "E",
+    "details": [
+      {
+        "type": "E",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "107656212",
+    "name": "Mitsuya",
+    "name_jp": "Mitsuya",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107656212.webp",
+    "arts_gen": "E",
+    "details": [
+      {
+        "type": "E",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "107666212",
+    "name": "Empress",
+    "name_jp": "Empress",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107666212.webp",
+    "arts_gen": "E",
+    "details": [
+      {
+        "type": "E",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "107717412",
+    "name": "Shalltear",
+    "name_jp": "Shalltear",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107717412.webp",
+    "arts_gen": "EX1",
+    "details": [
+      {
+        "type": "EX1",
+        "source": "SA"
+      }
+    ]
+  },
+  {
+    "id": "107697512",
+    "name": "Ainz",
+    "name_jp": "Ainz",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107697512.webp",
+    "arts_gen": "E",
+    "details": [
+      {
+        "type": "E",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "107737412",
+    "name": "Illya",
+    "name_jp": "Illya",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107737412.webp",
+    "arts_gen": "F",
+    "details": [
+      {
+        "type": "F",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "107767112",
+    "name": "Rin & Luvia",
+    "name_jp": "Rin & Luvia",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107767112.webp",
+    "arts_gen": "G",
+    "details": [
+      {
+        "type": "G",
+        "source": "S"
+      }
+    ]
+  },
+  {
+    "id": "107747512",
+    "name": "Miyu",
+    "name_jp": "Miyu",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107747512.webp",
+    "arts_gen": "EX1",
+    "details": [
+      {
+        "type": "EX1",
+        "source": "S"
+      }
+    ]
+  },
+  {
+    "id": "107757112",
+    "name": "Chloe (Fate)",
+    "name_jp": "Chloe (Fate)",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107757112.webp",
+    "arts_gen": "E",
+    "details": [
+      {
+        "type": "E",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "107807312",
+    "name": "Sagiri",
+    "name_jp": "Sagiri",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107807312.webp",
+    "arts_gen": "E",
+    "details": [
+      {
+        "type": "E",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "107817512",
+    "name": "Yuzuriha",
+    "name_jp": "Yuzuriha",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107817512.webp",
+    "arts_gen": "H",
+    "details": [
+      {
+        "type": "H",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "107827412",
+    "name": "Chobe",
+    "name_jp": "Chobe",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107827412.webp",
+    "arts_gen": "EX3",
+    "details": [
+      {
+        "type": "EX3",
+        "source": "SA"
+      },
+      {
+        "type": "EX3",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "107867112",
+    "name": "Sunraku",
+    "name_jp": "Sunraku",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107867112.webp",
+    "arts_gen": "E",
+    "details": [
+      {
+        "type": "E",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "107887512",
+    "name": "Arthur Pencilgon",
+    "name_jp": "Arthur Pencilgon",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107887512.webp",
+    "arts_gen": "EX1",
+    "details": [
+      {
+        "type": "F",
+        "source": "TA"
+      },
+      {
+        "type": "EX1",
+        "source": "S"
+      }
+    ]
+  },
+  {
+    "id": "107897112",
+    "name": "OiKatzo",
+    "name_jp": "OiKatzo",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107897112.webp",
+    "arts_gen": "EX1",
+    "details": [
+      {
+        "type": "EX1",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "107917112",
+    "name": "Demiurge",
+    "name_jp": "Demiurge",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107917112.webp",
+    "arts_gen": "EX1",
+    "details": [
+      {
+        "type": "EX1",
+        "source": "S"
+      }
+    ]
+  },
+  {
+    "id": "107927312",
+    "name": "Evileye",
+    "name_jp": "Evileye",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107927312.webp",
+    "arts_gen": "E",
+    "details": [
+      {
+        "type": "E",
+        "source": "SA"
+      }
+    ]
+  },
+  {
+    "id": "107947212",
+    "name": "Houka Inumuta",
+    "name_jp": "Houka Inumuta",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107947212.webp",
+    "arts_gen": "E",
+    "details": [
+      {
+        "type": "E",
+        "source": "SA"
+      }
+    ]
+  },
+  {
+    "id": "107967412",
+    "name": "Nonon Jakuzure",
+    "name_jp": "Nonon Jakuzure",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107967412.webp",
+    "arts_gen": "EX1",
+    "details": [
+      {
+        "type": "EX1",
+        "source": "S"
+      }
+    ]
+  },
+  {
+    "id": "107977212",
+    "name": "Summer Illya",
+    "name_jp": "Summer Illya",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107977212.webp",
+    "arts_gen": "EX1",
+    "details": [
+      {
+        "type": "EX1",
+        "source": "S"
+      }
+    ]
+  },
+  {
+    "id": "107997412",
+    "name": "Summer Chloe",
+    "name_jp": "Summer Chloe",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_107997412.webp",
+    "arts_gen": "E",
+    "details": [
+      {
+        "type": "E",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "108057212",
+    "name": "Beta",
+    "name_jp": "Beta",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_108057212.webp",
+    "arts_gen": "F",
+    "details": [
+      {
+        "type": "F",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "108047412",
+    "name": "Alpha",
+    "name_jp": "Alpha",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_108047412.webp",
+    "arts_gen": "E",
+    "details": [
+      {
+        "type": "E",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "108077512",
+    "name": "Demon Lord Samurai Rimuru",
+    "name_jp": "Demon Lord Samurai Rimuru",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_108077512.webp",
+    "arts_gen": "F",
+    "details": [
+      {
+        "type": "F",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "108087412",
+    "name": "Shuna",
+    "name_jp": "Shuna",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_108087412.webp",
+    "arts_gen": "E",
+    "details": [
+      {
+        "type": "E",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "108097312",
+    "name": "Veldora",
+    "name_jp": "Veldora",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_108097312.webp",
+    "arts_gen": "EX1",
+    "details": [
+      {
+        "type": "EX1",
+        "source": "A"
+      }
+    ]
+  },
+  {
+    "id": "108117412",
+    "name": "Kenshin Himura",
+    "name_jp": "Kenshin Himura",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_108117412.webp",
+    "arts_gen": "F",
+    "details": [
+      {
+        "type": "F",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "108187512",
+    "name": "Accelerator",
+    "name_jp": "Accelerator",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_108187512.webp",
+    "arts_gen": "F",
+    "details": [
+      {
+        "type": "F",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "108197412",
+    "name": "Index",
+    "name_jp": "Index",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_108197412.webp",
+    "arts_gen": "EX1",
+    "details": [
+      {
+        "type": "EX1",
+        "source": "S"
+      }
+    ]
+  },
+  {
+    "id": "108207412",
+    "name": "Frieren",
+    "name_jp": "Frieren",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_108207412.webp",
+    "arts_gen": "E",
+    "details": [
+      {
+        "type": "E",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "108227112",
+    "name": "Stark",
+    "name_jp": "Stark",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_108227112.webp",
+    "arts_gen": "EX3",
+    "details": [
+      {
+        "type": "EX3",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "108237312",
+    "name": "Ubel",
+    "name_jp": "Ubel",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_108237312.webp",
+    "arts_gen": "EX1",
+    "details": [
+      {
+        "type": "F",
+        "source": "TA"
+      },
+      {
+        "type": "EX1",
+        "source": "A"
+      }
+    ]
+  },
+  {
+    "id": "108247312",
+    "name": "Okarun",
+    "name_jp": "Okarun",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_108247312.webp",
+    "arts_gen": "EX1",
+    "details": [
+      {
+        "type": "EX1",
+        "source": "S"
+      }
+    ]
+  },
+  {
+    "id": "108267112",
+    "name": "Aira",
+    "name_jp": "Aira",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_108267112.webp",
+    "arts_gen": "G",
+    "details": [
+      {
+        "type": "G",
+        "source": "S"
+      }
+    ]
+  },
+  {
+    "id": "108327112",
+    "name": "Kyoko Sakura",
+    "name_jp": "Kyoko Sakura",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_108327112.webp",
+    "arts_gen": "D",
+    "details": [
+      {
+        "type": "E",
+        "source": "A"
+      },
+      {
+        "type": "D",
+        "source": "A"
+      }
+    ]
+  },
+  {
+    "id": "108337112",
+    "name": "Reimu Hakurei",
+    "name_jp": "Reimu Hakurei",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_108337112.webp",
+    "arts_gen": "E",
+    "details": [
+      {
+        "type": "E",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "108377512",
+    "name": "Easter Rimuru",
+    "name_jp": "Easter Rimuru",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_108377512.webp",
+    "arts_gen": "E",
+    "details": [
+      {
+        "type": "E",
+        "source": "A"
+      }
+    ]
+  },
+  {
+    "id": "108397512",
+    "name": "Sung Jinwoo",
+    "name_jp": "Sung Jinwoo",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_108397512.webp",
+    "arts_gen": "C",
+    "details": [
+      {
+        "type": "C",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "108427512",
+    "name": "Igris",
+    "name_jp": "Igris",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_108427512.webp",
+    "arts_gen": "EX2",
+    "details": [
+      {
+        "type": "EX2",
+        "source": "P"
+      }
+    ]
+  },
+  {
+    "id": "108437112",
+    "name": "Reinhard",
+    "name_jp": "Reinhard",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_108437112.webp",
+    "arts_gen": "D",
+    "details": [
+      {
+        "type": "E",
+        "source": "TA"
+      },
+      {
+        "type": "D",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "108477412",
+    "name": "Imperial Form Illya",
+    "name_jp": "Imperial Form Illya",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_108477412.webp",
+    "arts_gen": "F",
+    "details": [
+      {
+        "type": "F",
+        "source": "TA"
+      }
+    ]
+  },
+  {
+    "id": "108487412",
+    "name": "Divine Form Miyu",
+    "name_jp": "Divine Form Miyu",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_108487412.webp",
+    "arts_gen": "I",
+    "details": [
+      {
+        "type": "I",
+        "source": "A"
+      }
+    ]
+  },
+  {
+    "id": "108537212",
+    "name": "Zanka",
+    "name_jp": "Zanka",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_108537212.webp",
+    "arts_gen": "EX3",
+    "details": [
+      {
+        "type": "EX3",
+        "source": "A"
+      }
+    ]
+  },
+  {
+    "id": "108547312",
+    "name": "Riyo",
+    "name_jp": "Riyo",
+    "img": "https://www.grandsummoners.info/db/Units/Thumbnail/unit_thumbnail_108547312.webp",
+    "arts_gen": "E",
+    "details": [
+      {
+        "type": "E",
+        "source": "A"
+      },
+      {
+        "type": "EX1",
+        "source": "P"
+      }
+    ]
+  }
+]

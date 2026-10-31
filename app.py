@@ -3,7 +3,7 @@ import json
 from flask import Flask, request, jsonify 
 import requests
 
-# Importar tus módulos de Python existentes
+# Importar módulos de sincronización
 try: 
     import sync_global_info 
 except ImportError: 
@@ -14,19 +14,28 @@ app = Flask(__name__)
 # CONFIGURACIÓN
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "9193876123:AAHqmpdwNmpAvED2cdkZa9y9aspkNF3cgfE")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MAESTRO_PATH = os.path.join(BASE_DIR, "diccionarios", "diccionario_maestro_gs.json")
+DICCIONARIOS_DIR = os.path.join(BASE_DIR, "diccionarios")
+PERSONAJES_PATH = os.path.join(DICCIONARIOS_DIR, "lista_personajes_global.json")
+OBJETOS_PATH = os.path.join(DICCIONARIOS_DIR, "lista_objetos_global.json")
 GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbzauS_CZCo8Leqa--MP5nzLL58S1Is8UHeXY0ZGDzYDyislU3-1TlnROR_ZLvV8eVE8zw/exec"
 
-def cargar_datos_maestros(): 
-    if os.path.exists(MAESTRO_PATH): 
+def cargar_personajes(): 
+    if os.path.exists(PERSONAJES_PATH): 
         try: 
-            with open(MAESTRO_PATH, "r", encoding="utf-8") as f: 
+            with open(PERSONAJES_PATH, "r", encoding="utf-8") as f: 
                 return json.load(f) 
         except Exception: 
-            return {} 
-    return {}
+            return [] 
+    return []
 
-datos_gs = cargar_datos_maestros()
+def cargar_objetos(): 
+    if os.path.exists(OBJETOS_PATH): 
+        try: 
+            with open(OBJETOS_PATH, "r", encoding="utf-8") as f: 
+                return json.load(f) 
+        except Exception: 
+            return [] 
+    return []
 
 @app.route("/", methods=["GET"]) 
 def home(): 
@@ -37,10 +46,10 @@ def telegram_webhook():
     """Recibe los mensajes en tiempo real desde la API de Telegram""" 
     data = request.get_json() or {}
     
-    if "message" in data:
-        mensaje_obj = data["message"]
-        chat_id = mensaje_obj.get("chat", {}).get("id")
-        texto = mensaje_obj.get("text", "").strip()
+    msg_obj = data.get("message") or data.get("edited_message")
+    if msg_obj:
+        chat_id = msg_obj.get("chat", {}).get("id")
+        texto = msg_obj.get("text", "").strip()
 
         if chat_id and texto:
             respuesta = procesar_comando(texto)
@@ -65,9 +74,12 @@ def enviar_mensaje_telegram(chat_id, texto):
 def procesar_comando(texto): 
     texto_lower = texto.lower().strip()
     
-    # Si se usa en un grupo de Telegram, los comandos vienen como /unidad@GSViewer_bot
+    # Manejar menciones en grupos (/unidad@GSViewer_bot Chloe -> /unidad Chloe)
     if "@" in texto_lower:
-        texto_lower = texto_lower.split("@")[0]
+        partes = texto_lower.split()
+        if partes:
+            cmd = partes[0].split("@")[0]
+            texto_lower = " ".join([cmd] + partes[1:])
 
     # AYUDA / MENÚ
     if texto_lower in ["/start", "/help", "!ayuda", "hola", "menu"]:
@@ -81,23 +93,28 @@ def procesar_comando(texto):
         )
 
     # BUSCAR UNIDAD
-    if texto_lower.startswith("/unidad ") or texto_lower.startswith("!unidad "):
-        nombre = texto[8:].strip()
-        return buscar_unidad_info(nombre)
+    if texto_lower.startswith("/unidad") or texto_lower.startswith("!unidad"):
+        partes = texto.split(maxsplit=1)
+        if len(partes) > 1:
+            return buscar_unidad_info(partes[1].strip())
+        return "⚠️ Uso del comando: `/unidad [Nombre de Héroe]` (Ejemplo: `/unidad Shirou`)"
 
     # BUSCAR GUÍA DE MISIÓN
-    if texto_lower.startswith("/guia ") or texto_lower.startswith("!guia "):
-        query = texto[6:].strip()
-        return buscar_guia_mision(query)
+    if texto_lower.startswith("/guia") or texto_lower.startswith("!guia"):
+        partes = texto.split(maxsplit=1)
+        if len(partes) > 1:
+            return buscar_guia_mision(partes[1].strip())
+        return "⚠️ Uso del comando: `/guia [Nombre de Misión o Boss]` (Ejemplo: `/guia Dungeon 26`)"
 
-    # SINCRONIZACIÓN AUTOMÁTICA
+    # SINCRONIZACIÓN AUTOMÁTICA CON LA WIKI
     if texto_lower in ["/sync", "!sync"]:
         if sync_global_info:
             try:
-                sync_global_info.ejecutar_sincronizacion_completa()
-                global datos_gs
-                datos_gs = cargar_datos_maestros()
-                return "✅ *Sincronización Completa*: Base de datos actualizada con la Wiki oficial."
+                ok = sync_global_info.sync_from_global_db(DICCIONARIOS_DIR)
+                if ok:
+                    p_count = len(cargar_personajes())
+                    return f"✅ *Sincronización Exitosa*: {p_count} héroes sincronizados con la Wiki oficial."
+                return "⚠️ No se encontraron actualizaciones nuevas en la Wiki."
             except Exception as e:
                 return f"❌ Error en sincronización: {str(e)}"
         return "⚠️ Módulo de sincronización no disponible."
@@ -105,13 +122,15 @@ def procesar_comando(texto):
     return "🤖 Comando no reconocido. Envía `/help` para ver la lista de comandos disponibles."
 
 def buscar_unidad_info(nombre): 
-    unidades = datos_gs.get("personajes", []) if isinstance(datos_gs, dict) else (datos_gs if isinstance(datos_gs, list) else [])
+    unidades = cargar_personajes()
     nombre_norm = nombre.lower()
     coincidencia = None
     
     for u in unidades:
         if not isinstance(u, dict): continue
-        if nombre_norm in u.get("nombre", "").lower() or nombre_norm in u.get("nombreOriginal", "").lower():
+        nom = u.get("nombre", "").lower()
+        nom_orig = u.get("nombreOriginal", "").lower()
+        if nombre_norm in nom or nombre_norm in nom_orig:
             coincidencia = u
             break
 
