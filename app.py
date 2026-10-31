@@ -1,7 +1,7 @@
 import os 
 import json 
 import re
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from flask import Flask, request, jsonify 
 import requests
 
@@ -446,7 +446,7 @@ def procesar_callback_query(chat_id, cb_data, cb_id):
             responder_callback(cb_id, "Objeto cargado")
             return
 
-    # SKILLSET TRADUCIDO COMPLETO (Arts, SuperArts, CrossArts, PhantomBullet, Protagonize)
+    # SKILLSET TRADUCIDO COMPLETO
     if cb_data.startswith("sk_"):
         u_id = cb_data[3:]
         coincidencia = next((u for u in unidades if str(u.get("id")) == u_id), None)
@@ -506,7 +506,6 @@ def procesar_callback_query(chat_id, cb_data, cb_id):
                             for pk, ptxt in passives.items():
                                 if ptxt: passives_txt.append(f"  • *{pk.capitalize()}*: {traducir_habilidad(ptxt)}")
 
-                        # Extraer Habilidades de Dream Awakening
                         dream_data = raw_u.get("dream") or raw_u.get("dreamGL") or raw_u.get("dreamJP")
                         if isinstance(dream_data, dict):
                             for d_path, d_info in dream_data.items():
@@ -855,9 +854,10 @@ def enviar_crest_recomendacion(chat_id, nombre=""):
 
 
 def enviar_crest_palace_hoy(chat_id):
-    weekday_today = datetime.now().weekday()
+    # DÍA DE LA SEMANA EXACTO EN HORA MÉXICO/LATAM (UTC-6)
+    tz_latam = timezone(timedelta(hours=-6))
+    weekday_today = datetime.now(tz_latam).weekday()
     
-    # MOSTRAR LA ROTACIÓN SEMANAL COMPLETA MENCIONANDO EL DÍA DEDICADO
     rotacion_txt = []
     for day_num in range(7):
         info = CALENDARIO_CREST_PALACE[day_num]
@@ -868,7 +868,7 @@ def enviar_crest_palace_hoy(chat_id):
     info_today = CALENDARIO_CREST_PALACE.get(weekday_today, CALENDARIO_CREST_PALACE[0])
 
     msg = (
-        f"🏰 *CALENDARIO DE ROTACIÓN SEMANAL DE CREST PALACE* 🏰\n\n" +
+        f"🏰 *CALENDARIO DE ROTACIÓN SEMANAL DE CREST PALACE (HORARIO LATAM/UTC-6)* 🏰\n\n" +
         "\n".join(rotacion_txt) + "\n\n"
         f"⚔️ *JEFE Y PALACIO RECOMENDADO HOY ({info_today['dia'].upper()})*:\n"
         f"📍 *Palacio*: {info_today['palace']}\n"
@@ -904,6 +904,7 @@ def enviar_teambuilder_evaluador(chat_id, query_unidades=""):
     unidades_db = cargar_personajes()
     equipo_encontrado = []
     no_encontrados = []
+    ambiguos = []
 
     for nom_input in nombres:
         nom_norm = nom_input.lower()
@@ -917,9 +918,26 @@ def enviar_teambuilder_evaluador(chat_id, query_unidades=""):
             if exact:
                 if exact not in equipo_encontrado: equipo_encontrado.append(exact)
             else:
-                equipo_encontrado.append(matches[0])
+                ambiguos.append((nom_input, matches))
+                equipo_encontrado.append(matches[0]) # Usar el primer match representativo
         else:
             no_encontrados.append(nom_input)
+
+    # Si hay nombres ambiguos en el TeamBuilder, ofrecer botones interactivos
+    if ambiguos:
+        btn_rows = []
+        amb_txts = []
+        for name_term, match_list in ambiguos[:2]:
+            amb_txts.append(f"🔍 *Coincidencias para '{name_term}'*:")
+            for m in match_list[:4]:
+                u_id = m.get("id", "")
+                u_nom = m.get("nombre", "Héroe")
+                amb_txts.append(f"  • {u_nom} ({m.get('elemento')})")
+                btn_rows.append([{"text": f"⚔️ {u_nom}", "callback_data": f"selu_{u_id}"}])
+
+        note_amb = "\n\n💡 *Si querías una variante específica, toca su botón arriba.*"
+    else:
+        note_amb = ""
 
     if not equipo_encontrado:
         enviar_mensaje_telegram(chat_id, f"🔍 No encontré a ninguno de los héroes especificados: *{', '.join(no_encontrados)}*.")
@@ -1006,6 +1024,9 @@ def enviar_teambuilder_evaluador(chat_id, query_unidades=""):
         msg.append("\n".join([f"  • {nf}" for nf in que_no_funciona]))
     else:
         msg.append("  • ¡Excelente! No se detectaron conflictos de Arts Gen ni faltas de roles principales.")
+
+    if note_amb:
+        msg.append(note_amb)
 
     enviar_mensaje_telegram(chat_id, "\n".join(msg))
 
