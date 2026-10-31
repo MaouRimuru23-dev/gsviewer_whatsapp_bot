@@ -1,6 +1,7 @@
 import os 
 import json 
 import re
+from datetime import datetime
 from flask import Flask, request, jsonify 
 import requests
 
@@ -20,6 +21,28 @@ RAW_DATA_DIR = os.path.join(DICCIONARIOS_DIR, "raw_data")
 PERSONAJES_PATH = os.path.join(DICCIONARIOS_DIR, "lista_personajes_global.json")
 OBJETOS_PATH = os.path.join(DICCIONARIOS_DIR, "lista_objetos_global.json")
 GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbzauS_CZCo8Leqa--MP5nzLL58S1Is8UHeXY0ZGDzYDyislU3-1TlnROR_ZLvV8eVE8zw/exec"
+
+def registrar_comandos_telegram():
+    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/setMyCommands"
+    commands = [
+        {"command": "unidad", "description": "Info, Tier, Rol, Slots y Crestas de un Héroe"},
+        {"command": "equipo", "description": "Stats y habilidad traducida de un Equipamiento"},
+        {"command": "guia", "description": "Guías comunitarias de misiones y jefes"},
+        {"command": "foreversummons", "description": "Pool Oficial y Héroes para Forever Summons"},
+        {"command": "foreversummons_equip", "description": "Pool Oficial y Objetos para Forever Summons"},
+        {"command": "artsgen", "description": "Grupos completos de Arts Gen (Type A-F, EX)"},
+        {"command": "crest", "description": "Crestas recomendadas para un Héroe"},
+        {"command": "crestrun", "description": "Dungeon de Crestas Activa HOY según el calendario"},
+        {"command": "teambuilder", "description": "Generador de Escuadrones por Jefe/Boss"},
+        {"command": "sync", "description": "Sincronizar con la Wiki oficial de GS"},
+        {"command": "help", "description": "Menú principal de ayuda y comandos"}
+    ]
+    try:
+        requests.post(url, json={"commands": commands}, timeout=5)
+    except Exception as e:
+        print(f"Error registrando comandos de Telegram: {e}")
+
+registrar_comandos_telegram()
 
 def cargar_personajes(): 
     if os.path.exists(PERSONAJES_PATH): 
@@ -87,6 +110,45 @@ def traducir_habilidad(texto):
         txt = txt.replace(en, es)
     return txt
 
+# CALENDARIO OFICIAL DE CREST PALACE Y BOSSES DE LA APP
+CALENDARIO_CREST_PALACE = {
+    0: { # Lunes
+        "boss": "Oldeus (Oblivion)", "dia": "Lunes", "dificultad": "PRO",
+        "estrategia": "Solo recibe daño al ser Breakeado. Killer de Luz (400%). Inmune a Oscuridad.",
+        "mvp": "Est, Duke, Platina Asc. (El DPS NO debe ser Oscuridad)."
+    },
+    1: { # Martes
+        "boss": "Ignis (Crimson Sea)", "dia": "Martes", "dificultad": "EXTREME",
+        "estrategia": "Duran con Goblin Dagger es MVP. Stance de fuego con nukes masivos.",
+        "mvp": "Duran + Goblin Dagger, Thetis, Kirisame."
+    },
+    2: { # Miércoles
+        "boss": "Freydal (Diamond Dust)", "dia": "Miércoles", "dificultad": "EXTREME",
+        "estrategia": "Storm Mode (Alta Evasión). Reset de Skill CT cada 10s. Killer de Agua.",
+        "mvp": "Hajime Saito, Shion Santa, Saitama, Okarun."
+    },
+    3: { # Jueves
+        "boss": "Elpneumas (Eternity)", "dia": "Jueves", "dificultad": "EXTREME",
+        "estrategia": "Se oculta bajo tierra. Killer de Humanos. Negación de Agua y Magia.",
+        "mvp": "Summer Miyu, Okarun, Konpaku Youmu (Quemar con objetos)."
+    },
+    4: { # Viernes
+        "boss": "Fosradius (Adamantine)", "dia": "Viernes", "dificultad": "PRO",
+        "estrategia": "Inmune a Crítico. Faintea y drena Artes al 50%/20% HP.",
+        "mvp": "OBLIGATORIO: Protección contra Parálisis + DPS Luz u Oscuridad."
+    },
+    5: { # Sábado
+        "boss": "Subject γ-2 (Cursed Claw)", "dia": "Sábado", "dificultad": "EXTREME",
+        "estrategia": "Requiere múltiples Breaks. Congela al 50%/25% HP.",
+        "mvp": "OBLIGATORIO: Protección contra Congelación. Breaker: Chloe, Platina, Accelerator."
+    },
+    6: { # Domingo
+        "boss": "Subject B-3 (Discordia)", "dia": "Domingo", "dificultad": "PRO",
+        "estrategia": "Inmune a Magia. Drenaje inicial de 100 Artes. Faintea al HP más alto.",
+        "mvp": "Okarun, War Hero Fen, Houka."
+    }
+}
+
 @app.route("/", methods=["GET"]) 
 def home(): 
     return "🤖 GSViewer Telegram Bot Server Activo y Listo!", 200
@@ -95,7 +157,6 @@ def home():
 def telegram_webhook(): 
     data = request.get_json() or {}
     
-    # 1. Manejar Botones Interactivos (Callback Query)
     if "callback_query" in data:
         cb = data["callback_query"]
         chat_id = cb.get("message", {}).get("chat", {}).get("id")
@@ -106,7 +167,6 @@ def telegram_webhook():
             procesar_callback_query(chat_id, cb_data, cb_id)
         return jsonify({"status": "ok"}), 200
 
-    # 2. Manejar Mensajes de Texto
     msg_obj = data.get("message") or data.get("edited_message")
     if msg_obj:
         chat_id = msg_obj.get("chat", {}).get("id")
@@ -172,18 +232,18 @@ def procesar_comando(chat_id, texto):
     if texto_lower in ["/start", "/help", "!ayuda", "hola", "menu", "help", "ayuda"]:
         menu_text = (
             "⚔️ *BIENVENIDO AL AGENTE TÁCTICO INTEGRAL GSVIEWER* ⚔️\n\n"
-            "Escribe la diagonal ( / ) para ver la lista de comandos:\n\n"
+            "Escribe la diagonal ( / ) para desplegar el menú autocompletado:\n\n"
             "🔹 `/unidad [Nombre]` -> Ficha HD, Tier, Rol, Slots y Habilidades.\n"
-            "🔹 `/equipo [Nombre]` -> Stats, Cooldown y habilidades de un Objeto.\n"
-            "🔹 `/foreversummons` -> Mejores Héroes para Forever Summons.\n"
-            "🔹 `/foreversummons_equip` -> Mejores Objetos para Forever Summons.\n"
-            "🔹 `/artsgen` -> Clasificación por Grupos de Arts Gen (Type A-F, EX).\n"
+            "🔹 `/equipo [Nombre]` -> Stats, Cooldown y habilidades traducidas.\n"
+            "🔹 `/foreversummons` -> Pool Oficial de Héroes Forever Summons.\n"
+            "🔹 `/foreversummons_equip` -> Pool Oficial de Objetos Forever Summons.\n"
+            "🔹 `/artsgen` -> Clasificación COMPLETA por Grupos de Arts Gen (Type A-F).\n"
             "🔹 `/crest [Nombre]` -> Recomendación de Crestas para un Héroe.\n"
-            "🔹 `/crestrun` -> Calendario de Dungeons de Crestas activos hoy.\n"
-            "🔹 `/teambuilder [Boss]` -> Generador automático de escuadrones.\n"
+            "🔹 `/crestrun` -> Dungeon y Boss de Crestas activo HOY.\n"
+            "🔹 `/teambuilder [Boss]` -> Escuadrón Táctico por Jefe/Misión.\n"
             "🔹 `/guia [Misión]` -> Guías comunitarias de la app.\n"
             "🔹 `/sync` -> Sincronización en vivo con la Wiki oficial.\n\n"
-            "💡 *Ejemplo*: `/unidad Shirou` o `/equipo True Flamboyance`"
+            "💡 *Ejemplo*: `/unidad Shirou` o `/crestrun`"
         )
         enviar_mensaje_telegram(chat_id, menu_text)
         return
@@ -239,7 +299,7 @@ def procesar_comando(chat_id, texto):
         enviar_crest_recomendacion(chat_id, query)
         return
 
-    # CALENDARIO CREST PALACE
+    # CALENDARIO CREST PALACE HOY
     if texto_lower in ["/crestrun", "/road", "!crestrun", "crestrun"]:
         enviar_crest_palace_hoy(chat_id)
         return
@@ -287,7 +347,7 @@ def enviar_unidad_perfil(chat_id, nombre):
         enviar_mensaje_telegram(chat_id, f"🔍 No encontré a la unidad *'{nombre}'*. Verifica el nombre e intenta de nuevo.")
         return
 
-    # Si hay múltiples coincidencias, mostrar menú de selección
+    # Manejo de Duplicados
     if len(coincidencias) > 1 and not any(nombre_norm == c.get("nombre", "").lower() for c in coincidencias):
         btn_rows = []
         txt_items = []
@@ -326,7 +386,7 @@ def mostrar_detalle_unidad(chat_id, coincidencia):
         f"✨ *SuperAwakening (SA)*: {'Sí (★6 SA)' if is_sa else 'No (★5)'}\n\n"
         f"🎒 *Slots de Equipamiento*:\n{slots_str}\n\n"
         f"🔮 *Crestas Recomendadas*: {coincidencia.get('crestRecom', 'ATK UP, Equip CT Speed')}\n\n"
-        f"👇 *Toca los botones para ver las habilidades traducidas*:"
+        f"👇 *Toca los botones para ver los detalles tácticos completos*:"
     )
 
     u_id = coincidencia.get("id", "")
@@ -579,7 +639,8 @@ def enviar_guia_mision(chat_id, query):
 
 
 def enviar_forever_summons_heroes(chat_id):
-    tier1_IDs = {"361", "360", "265", "286", "190", "279", "364"}
+    # POOL OFICIAL HARDCODEADO DE LA APP (ForeverSummonsAnalizer.kt)
+    tier1_IDs = {"265", "360", "361", "286", "190", "279", "364"}
     tier2_IDs = {"282", "291", "269", "237", "191", "207", "280", "274", "278", "261", "239", "283", "267"}
     tier3_IDs = {"363", "284", "275", "285", "292", "119", "289", "249", "214", "268", "266", "156", "243", "192"}
 
@@ -602,24 +663,44 @@ def enviar_forever_summons_heroes(chat_id):
         txt_list.append(f"{idx+1}. *{u.get('nombre')}* ({u.get('elemento')}) - Tier {u.get('tier')}")
 
     msg = (
-        "🔮 *FOREVER SUMMONS: POOL OFICIAL Y MEJORES HÉROES* 🔮\n\n"
-        "Esta es la lista definida del Forever Summons de la app. Si te sale alguna, se recomienda *CONSERVAR*:\n\n" +
+        "🔮 *FOREVER SUMMONS: POOL OFICIAL DEFINIDO EN LA APP* 🔮\n\n"
+        "Esta es la lista oficial del Forever Summons de GSViewer. Si te sale alguna, se recomienda *CONSERVAR*:\n\n" +
         "\n".join(txt_list) + "\n\n"
-        "💡 *Top Prioridades*: Hart (#1), War Hero Fen (#2), Kirisame (#3), Thetis, Shirou Emiya, Emperor, Hazuki."
+        "💡 *TOP PRIORIDADES*:\n"
+        "  • #1 *Hart*: Soporte definitivo, curador y acumulador de energía.\n"
+        "  • #2 *War Hero Fen*: Batería masiva de Arts y sub-DPS.\n"
+        "  • #3 *Kirisame*: Tanque supremo para sobrevivir al meta actual.\n"
+        "  • #4 *Thetis*, *Shirou Emiya*, *Mizuki XII*, *Emperor*, *Hazuki*."
     )
     enviar_mensaje_telegram(chat_id, msg)
 
 
 def enviar_forever_summons_equip(chat_id):
+    # POOL HARDCODEADO DE EQUIPAMIENTO DEFINIDO EN LA APP (ForeverSummonsEquipScreen.kt)
+    pool_nombres = [
+        "Iris' Rolly-Frill Bikini", "Red-Nosed Roy Doll", "Little-Red-Riding Mira?!", "Ces' Wavy Frill", "Rayas' Sunny Aloha Shirt",
+        "Fen's Aloha Shorts", "Santa Fen Doll", "Santa Liza (Seeking Wisdom)", "Liza's Pearly One-Piece", "Liza's Smart Skirt",
+        "Feena's Devil Wings", "Charlotte's Pure Ruffles", "The Legend of Ganan", "Loving Snow Princess", "Ces' Sandy Blossom",
+        "Emi's Smooth Streamline", "Rishley's Sunset Bikini", "Celia's Seashore Pareo",
+        "True Flamboyance", "True Izanagi", "Diez Jade", "Type-0", "True Excalibur", "True Centurion", "True Raaz"
+    ]
+
     objetos = cargar_objetos()
-    top_equips = [o for o in objetos if isinstance(o, dict) and o.get("rareza") in ["★5", "★6"]][:12]
+    top_equips = []
+    for n in pool_nombres:
+        matched = next((o for o in objetos if isinstance(o, dict) and (n.lower() in o.get("nombre", "").lower() or n.lower() in o.get("nombre_original", "").lower())), None)
+        if matched and matched not in top_equips:
+            top_equips.append(matched)
+
+    if not top_equips:
+        top_equips = [o for o in objetos if isinstance(o, dict) and o.get("rareza") in ["★5", "★6"]][:12]
 
     txt_list = []
-    for idx, o in enumerate(top_equips):
-        txt_list.append(f"{idx+1}. *{o.get('nombre')}* ({o.get('tipo')}) - {o.get('rareza')}")
+    for idx, o in enumerate(top_equips[:12]):
+        txt_list.append(f"{idx+1}. *{o.get('nombre')}* ({o.get('tipo', 'Equip')}) - {o.get('rareza', '★5')}")
 
     msg = (
-        "💎 *FOREVER SUMMONS EQUIPAMIENTOS: POOL DEFINIDO* 💎\n\n"
+        "💎 *FOREVER SUMMONS EQUIPAMIENTOS: POOL DEFINIDO EN LA APP* 💎\n\n"
         "Si te sale alguno de estos objetos en el Forever Summons de Equipos, se recomienda *CONSERVAR*:\n\n" +
         "\n".join(txt_list) + "\n\n"
         "💡 *Top Prioridades*: True Flamboyance, True Izanagi, Diez Jade, Type-0, True Excalibur, True Centurion."
@@ -693,19 +774,22 @@ def enviar_crest_recomendacion(chat_id, nombre=""):
 
 
 def enviar_crest_palace_hoy(chat_id):
+    weekday = datetime.now().weekday()
+    info_today = CALENDARIO_CREST_PALACE.get(weekday, CALENDARIO_CREST_PALACE[0])
+
     msg = (
-        "🏰 *CALENDARIO TÁCTICO: CREST PALACE & ROAD MAP HOY* 🏰\n\n"
-        "⚔️ *Dungeons Activas Hoy*:\n"
-        "  • *Shrine of the Burning Flame* (Fuego)\n"
-        "  • *Shrine of the Frozen Water* (Agua)\n"
-        "  • *Shrine of the Dark Dragon* (Oscuridad)\n\n"
-        "💡 *Consejo de Farmeo*: Usa un equipo con alto daño elemental para farmear Crestas Nivel 4 y 4+ rápidamente."
+        f"🏰 *CALENDARIO TÁCTICO CREST PALACE: DÍA {info_today['dia'].upper()}* 🏰\n\n"
+        f"⚔️ *Jefe Activo Hoy*: {info_today['boss']}\n"
+        f"📊 *Dificultad*: {info_today['dificultad']}\n\n"
+        f"📝 *Estrategia Técnica*:\n{info_today['estrategia']}\n\n"
+        f"🌟 *MVP / Héroes Recomendados*:\n{info_today['mvp']}\n\n"
+        f"💡 *Tip del Líder*: La unidad en la posición 1 (Líder) es la que recibe la Cresta al ganar."
     )
     enviar_mensaje_telegram(chat_id, msg)
 
 
 def enviar_teambuilder(chat_id, query=""):
-    bosses_populares = ["Palace of Trials 30F", "Dungeon of Trials F26", "Ignis", "Wilkes", "Giant Bosses"]
+    bosses_populares = ["Palace of Trials 30F", "Dungeon of Trials F26", "Ignis", "Freydal", "Elpneumas", "Fosradius", "Wilkes"]
     
     if not query:
         msg = (
