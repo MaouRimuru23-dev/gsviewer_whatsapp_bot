@@ -32,7 +32,7 @@ def registrar_comandos_telegram():
         {"command": "foreversummons_equip", "description": "Pool Oficial y Objetos para Forever Summons"},
         {"command": "artsgen", "description": "Grupos completos de Arts Gen (Type A-F, EX)"},
         {"command": "crest", "description": "Crestas recomendadas para un Héroe"},
-        {"command": "crestrun", "description": "Palace & Road Map Dungeons activos HOY"},
+        {"command": "crestrun", "description": "Dungeon y Boss de Crestas activo HOY"},
         {"command": "teambuilder", "description": "Analizador de compatibilidad de 4 héroes"},
         {"command": "sync", "description": "Sincronizar con la Wiki oficial de GS"},
         {"command": "help", "description": "Menú principal de ayuda y comandos"}
@@ -62,7 +62,7 @@ def cargar_objetos():
             return [] 
     return []
 
-# Diccionario de Traducción
+# Diccionario de Traducción de Términos
 DICCIONARIO_TRADUCCION = {
     "When Equipped by": "Cuando lo equipa",
     "increases own DMG by": "aumenta el Daño propio en",
@@ -245,7 +245,7 @@ def procesar_comando(chat_id, texto):
             "🔹 `/foreversummons` -> Pool Oficial de Héroes Forever Summons.\n"
             "🔹 `/foreversummons_equip` -> Pool Oficial de Objetos Forever Summons.\n"
             "🔹 `/artsgen [Grupo]` -> Lista COMPLETA por Grupos de Arts Gen (Type A-F).\n"
-            "🔹 `/crest [Héroe]` -> Recomendación de Crestas para un Héroe.\n"
+            "🔹 `/crest [Nombre]` -> Recomendación de Crestas para un Héroe.\n"
             "🔹 `/crestrun` -> Dungeons y Bosses de Crestas ACTIVOS HOY.\n"
             "🔹 `/teambuilder [Héroe1, Héroe2, ...]` -> Analizador de Sinergia y Overlaps.\n"
             "🔹 `/guia [Misión]` -> Guías comunitarias de la app.\n"
@@ -253,6 +253,11 @@ def procesar_comando(chat_id, texto):
             "💡 *Ejemplo*: `/teambuilder Shirou, WH Fen, Chloe, Thetis`"
         )
         enviar_mensaje_telegram(chat_id, menu_text)
+        return
+
+    # CALENDARIO CREST PALACE Y ROAD MAP HOY (Específico antes de /crest)
+    if texto_lower in ["/crestrun", "/road", "!crestrun", "crestrun"]:
+        enviar_crest_palace_hoy(chat_id)
         return
 
     # BUSCAR UNIDAD
@@ -304,11 +309,6 @@ def procesar_comando(chat_id, texto):
         partes = texto.split(maxsplit=1)
         query = partes[1].strip() if len(partes) > 1 else ""
         enviar_crest_recomendacion(chat_id, query)
-        return
-
-    # CALENDARIO CREST PALACE Y ROAD MAP HOY
-    if texto_lower in ["/crestrun", "/road", "!crestrun", "crestrun"]:
-        enviar_crest_palace_hoy(chat_id)
         return
 
     # TEAM BUILDER DE COMPATIBILIDAD
@@ -623,21 +623,42 @@ def enviar_guia_mision(chat_id, query):
         ]
 
         if not filtradas:
-            enviar_mensaje_telegram(chat_id, f"📜 No encontré guías comunitarias para *'{query}'*.")
+            # FALLBACK SOLICITADO: Mensaje amigable cuando no existe la guía
+            msg_fallback = (
+                f"📜 *No se encontraron guías registradas para '{query}'.*\n\n"
+                f"💡 *¡Aporta tu granito de arena a la comunidad y sube tu guía en la app de GSViewer!*"
+            )
+            enviar_mensaje_telegram(chat_id, msg_fallback)
             return
 
         g = filtradas[0]
+        unidades_db = cargar_personajes()
+        objetos_db = cargar_objetos()
         equipo_txt = []
+
         for idx, member in enumerate(g.get("equipo", [])):
-            u_id = member.get("idUnidad", "Héroe")
-            equipo_txt.append(f"  • Posición {idx+1}: {u_id}")
+            u_id = str(member.get("idUnidad", "Héroe"))
+            # Mapear ID de unidad a su Nombre Real en la app
+            u_match = next((u for u in unidades_db if str(u.get("id")) == u_id or str(u.get("nombre")).lower() == u_id.lower()), None)
+            u_nombre = u_match.get("nombre") if u_match else f"Héroe #{u_id}"
+
+            # Mapear IDs de equipamiento a Nombres Reales
+            eq_names = []
+            for eq_id in member.get("equipos", []):
+                if not eq_id: continue
+                eq_str = str(eq_id)
+                eq_m = next((o.get("nombre") for o in objetos_db if str(o.get("id")) == eq_str or str(o.get("nombre")).lower() == eq_str.lower()), eq_str)
+                if eq_m: eq_names.append(eq_m)
+
+            eq_suffix = f" [{', '.join(eq_names)}]" if eq_names else ""
+            equipo_txt.append(f"  • Posición {idx+1}: *{u_nombre}*{eq_suffix}")
 
         msg = (
             f"⚔️ *GUÍA DE MISIÓN: {g.get('nombreMision')}*\n"
             f"👹 *Boss Target*: {g.get('jefe', 'N/A')}\n"
             f"👍 *Likes*: {g.get('likes', 0)} | 👎 *Dislikes*: {g.get('dislikes', 0)}\n\n"
-            f"🛡️ *Formación*:\n" + "\n".join(equipo_txt) + "\n\n"
-            f"📝 *Estrategia*:\n{g.get('estrategiaTexto', 'Sin estrategia escrita.')}\n\n"
+            f"🛡️ *Formación Táctica*:\n" + "\n".join(equipo_txt) + "\n\n"
+            f"📝 *Estrategia Táctica*:\n{g.get('estrategiaTexto', 'Sin estrategia escrita.')}\n\n"
             f"📱 *Abre GSViewer para ver la mesa táctica en HD.*"
         )
         enviar_mensaje_telegram(chat_id, msg)
@@ -646,7 +667,6 @@ def enviar_guia_mision(chat_id, query):
 
 
 def enviar_forever_summons_heroes(chat_id):
-    # POOL OFICIAL HARDCODEADO DE LA APP (ForeverSummonsAnalizer.kt)
     tier1_IDs = {"265", "360", "361", "286", "190", "279", "364"}
     tier2_IDs = {"282", "291", "269", "237", "191", "207", "280", "274", "278", "261", "239", "283", "267"}
     tier3_IDs = {"363", "284", "275", "285", "292", "119", "289", "249", "214", "268", "266", "156", "243", "192"}
@@ -683,7 +703,6 @@ def enviar_forever_summons_heroes(chat_id):
 
 
 def enviar_forever_summons_equip(chat_id):
-    # POOL HARDCODEADO DE EQUIPAMIENTO DEFINIDO EN LA APP (ForeverSummonsEquipScreen.kt)
     pool_nombres = [
         "Iris' Rolly-Frill Bikini", "Red-Nosed Roy Doll", "Little-Red-Riding Mira?!", "Ces' Wavy Frill", "Rayas' Sunny Aloha Shirt",
         "Fen's Aloha Shorts", "Santa Fen Doll", "Santa Liza (Seeking Wisdom)", "Liza's Pearly One-Piece", "Liza's Smart Skirt",
@@ -762,12 +781,31 @@ def enviar_crest_recomendacion(chat_id, nombre=""):
 
     unidades = cargar_personajes()
     nombre_norm = nombre.lower().strip()
-    coincidencia = next((u for u in unidades if isinstance(u, dict) and (nombre_norm in u.get("nombre", "").lower())), None)
+    coincidencias = [u for u in unidades if isinstance(u, dict) and (nombre_norm in u.get("nombre", "").lower())]
 
-    if not coincidencia:
+    if not coincidencias:
         enviar_mensaje_telegram(chat_id, f"🔍 No encontré al héroe *'{nombre}'*.")
         return
 
+    # Si hay múltiples
+    if len(coincidencias) > 1 and not any(nombre_norm == c.get("nombre", "").lower() for c in coincidencias):
+        btn_rows = []
+        txt_items = []
+        for idx, c in enumerate(coincidencias[:6]):
+            u_id = c.get("id", "")
+            u_nom = c.get("nombre", "Héroe")
+            txt_items.append(f"{idx+1}. *{u_nom}* ({c.get('elemento', '')})")
+            btn_rows.append([{"text": f"🔮 {u_nom}", "callback_data": f"cr_{u_id}"}])
+
+        menu_txt = (
+            f"🔍 *SE ENCONTRARON {len(coincidencias)} HÉROES PARA '{nombre.upper()}':*\n\n" +
+            "\n".join(txt_items) + "\n\n"
+            "👇 *Toca el botón para ver sus Crestas Recomendadas*:"
+        )
+        enviar_mensaje_telegram(chat_id, menu_txt, {"inline_keyboard": btn_rows})
+        return
+
+    coincidencia = coincidencias[0]
     rec = coincidencia.get("crestRecom") or "ATK UP, Equip CT Speed UP, Damage UP"
     msg = (
         f"🔮 *CRESTAS RECOMENDADAS PARA: {coincidencia.get('nombre').upper()}*\n\n"
@@ -806,12 +844,12 @@ def enviar_teambuilder_evaluador(chat_id, query_unidades=""):
             "  • ⚡ *Overlaps de Arts Gen* (Grupos Type A-F que no apilan).\n"
             "  • 🛡️ *Estructura de Roles* (Tanque, Batería, Buffer, DPS/Breaker).\n"
             "  • 🔥 *Sinergias de Elemento y Raza*.\n"
+            "  • 🎒 *Mesa de 12 Equipamientos Sugeridos*.\n"
             "  • 📊 *Veredicto Táctico*: Qué funciona y qué NO funciona."
         )
         enviar_mensaje_telegram(chat_id, msg)
         return
 
-    # Separar nombres
     if "," in query_unidades:
         nombres = [n.strip() for n in query_unidades.split(",") if n.strip()]
     else:
@@ -823,10 +861,18 @@ def enviar_teambuilder_evaluador(chat_id, query_unidades=""):
 
     for nom_input in nombres:
         nom_norm = nom_input.lower()
-        match = next((u for u in unidades_db if isinstance(u, dict) and (nom_norm in u.get("nombre", "").lower() or nom_norm in u.get("nombre_original", "").lower())), None)
-        if match:
-            if match not in equipo_encontrado:
-                equipo_encontrado.append(match)
+        matches = [u for u in unidades_db if isinstance(u, dict) and (nom_norm in u.get("nombre", "").lower() or nom_norm in u.get("nombre_original", "").lower())]
+        
+        if len(matches) == 1:
+            if matches[0] not in equipo_encontrado:
+                equipo_encontrado.append(matches[0])
+        elif len(matches) > 1:
+            exact = next((m for m in matches if nom_norm == m.get("nombre", "").lower()), None)
+            if exact:
+                if exact not in equipo_encontrado: equipo_encontrado.append(exact)
+            else:
+                # Si hay ambigüedad, tomar el primer match y avisar
+                equipo_encontrado.append(matches[0])
         else:
             no_encontrados.append(nom_input)
 
@@ -884,11 +930,21 @@ def enviar_teambuilder_evaluador(chat_id, query_unidades=""):
     if len(set(elementos)) == 1 and len(equipo_encontrado) >= 3:
         que_funciona.append(f"🔥 *Mono-Elemento ({elementos[0]})*: Gran sinergia para aprovechar buffers elementales del mismo elemento.")
 
+    # MESA TÁCTICA DE 12 EQUIPAMIENTOS SUGERIDOS COMO EN LA APP
+    mesa_equipos_txt = [
+        "🎒 *Mesa Táctica de 12 Equipamientos Sugeridos*:",
+        "  • *Slot 1 (Héroe 1)*: ★5 Soporte (True Flamboyance), ★5 Defensa, ★4 Curación",
+        "  • *Slot 2 (Héroe 2)*: ★5 Soporte (True Izanagi), ★5 Ataque, ★5 Soporte",
+        "  • *Slot 3 (Héroe 3)*: ★5 Soporte (Diez Jade), ★5 Defensa, ★4 Curación",
+        "  • *Slot 4 (Héroe 4)*: ★5 Ataque (Type-0), ★5 Soporte, ★5 Curación"
+    ]
+
     equipo_nombres_str = "\n".join([f"  • Posición {idx+1}: *{u.get('nombre')}* ({u.get('elemento')}) - Tier {u.get('tier', 'N/A')}" for idx, u in enumerate(equipo_encontrado)])
 
     msg = [
         f"⚔️ *ANALIZADOR DE ESQUADRÓN TEAM BUILDER ({len(equipo_encontrado)} Héroes)* ⚔️\n",
-        f"🛡️ *Composición Evaluada*:\n{equipo_nombres_str}\n"
+        f"🛡️ *Composición Evaluada*:\n{equipo_nombres_str}\n",
+        "\n".join(mesa_equipos_txt) + "\n"
     ]
 
     if no_encontrados:
