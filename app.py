@@ -1,6 +1,7 @@
 import os 
 import json 
 import re
+import time
 from datetime import datetime, timezone, timedelta
 from flask import Flask, request, jsonify 
 import requests
@@ -21,6 +22,9 @@ RAW_DATA_DIR = os.path.join(DICCIONARIOS_DIR, "raw_data")
 PERSONAJES_PATH = os.path.join(DICCIONARIOS_DIR, "lista_personajes_global.json")
 OBJETOS_PATH = os.path.join(DICCIONARIOS_DIR, "lista_objetos_global.json")
 GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbzauS_CZCo8Leqa--MP5nzLL58S1Is8UHeXY0ZGDzYDyislU3-1TlnROR_ZLvV8eVE8zw/exec"
+
+# Cache en Memoria para Sesiones de TeamBuilder (Garantiza callback_data < 64 bytes)
+TEAMBUILDER_SESSIONS = {}
 
 def registrar_comandos_telegram():
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/setMyCommands"
@@ -445,15 +449,16 @@ def procesar_callback_query(chat_id, cb_data, cb_id):
     unidades = cargar_personajes()
     
     # REEMPLAZO INTERACTIVO EN TEAMBUILDER
-    if cb_data.startswith("tbswap~"):
-        parts = cb_data.split("~")
+    if cb_data.startswith("tbswap|"):
+        parts = cb_data.split("|")
         if len(parts) >= 4:
             u_id = parts[1]
             orig_term = parts[2]
-            orig_query = parts[3]
+            session_id = parts[3]
+            orig_query = TEAMBUILDER_SESSIONS.get(session_id, "")
 
             coincidencia = next((u for u in unidades if str(u.get("id")) == u_id), None)
-            if coincidencia:
+            if coincidencia and orig_query:
                 new_name = coincidencia.get("nombre")
                 nombres_list = [n.strip() for n in orig_query.split(",")]
                 for idx, item in enumerate(nombres_list):
@@ -959,14 +964,19 @@ def enviar_teambuilder_evaluador(chat_id, query_unidades=""):
         else:
             no_encontrados.append(nom_input)
 
+    # Crear Sesión Corta en Memoria para callback_data
+    session_id = f"{chat_id}_{int(time.time())}"
+    TEAMBUILDER_SESSIONS[session_id] = query_unidades
+
     # Si hay nombres ambiguos, generar botones para re-evaluar la escuadra
     btn_rows = []
     if ambiguos:
         for name_term, match_list in ambiguos[:2]:
             for m in match_list[:3]:
-                u_id = m.get("id", "")
+                u_id = str(m.get("id", ""))
                 u_nom = m.get("nombre", "Héroe")
-                btn_rows.append([{"text": f"⚔️ Cambiar a: {u_nom}", "callback_data": f"tbswap~{u_id}~{name_term}~{query_unidades}"}])
+                cb_str = f"tbswap|{u_id}|{name_term}|{session_id}"
+                btn_rows.append([{"text": f"⚔️ Cambiar a: {u_nom}", "callback_data": cb_str}])
 
     que_funciona = []
     que_no_funciona = []
