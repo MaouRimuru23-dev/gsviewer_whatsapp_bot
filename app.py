@@ -21,6 +21,30 @@ PERSONAJES_PATH = os.path.join(DICCIONARIOS_DIR, "lista_personajes_global.json")
 OBJETOS_PATH = os.path.join(DICCIONARIOS_DIR, "lista_objetos_global.json")
 GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbzauS_CZCo8Leqa--MP5nzLL58S1Is8UHeXY0ZGDzYDyislU3-1TlnROR_ZLvV8eVE8zw/exec"
 
+def registrar_comandos_telegram():
+    """Registra la lista de comandos con diagonal (/) en el menú de autocompletado de Telegram"""
+    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/setMyCommands"
+    commands = [
+        {"command": "unidad", "description": "Info, Tier, Rol, Slots y Crestas de un Héroe"},
+        {"command": "equipo", "description": "Stats y habilidad traducida de un Equipamiento"},
+        {"command": "guia", "description": "Guías comunitarias de misiones y jefes"},
+        {"command": "foreversummons", "description": "Mejores Héroes para Forever Summons"},
+        {"command": "foreversummons_equip", "description": "Mejores Objetos para Forever Summons"},
+        {"command": "artsgen", "description": "Grupos de Arts Gen (Type A-F, EX)"},
+        {"command": "crest", "description": "Crestas recomendadas para un Héroe"},
+        {"command": "crestrun", "description": "Calendario de Dungeons de Crestas hoy"},
+        {"command": "teambuilder", "description": "Generador de Escuadrones Tácticos"},
+        {"command": "sync", "description": "Sincronizar con la Wiki oficial de GS"},
+        {"command": "help", "description": "Menú principal de ayuda y comandos"}
+    ]
+    try:
+        requests.post(url, json={"commands": commands}, timeout=5)
+    except Exception as e:
+        print(f"Error registrando comandos de Telegram: {e}")
+
+# Registrar comandos en la API de Telegram al iniciar
+registrar_comandos_telegram()
+
 def cargar_personajes(): 
     if os.path.exists(PERSONAJES_PATH): 
         try: 
@@ -156,6 +180,7 @@ def responder_callback(cb_id, text=""):
 def procesar_comando(chat_id, texto): 
     texto_lower = texto.lower().strip()
     
+    # Manejar menciones en grupos (/unidad@GSViewer_bot Chloe -> /unidad Chloe)
     if "@" in texto_lower:
         partes = texto_lower.split()
         if partes:
@@ -163,10 +188,10 @@ def procesar_comando(chat_id, texto):
             texto_lower = " ".join([cmd] + partes[1:])
 
     # AYUDA / MENÚ PRINCIPAL
-    if texto_lower in ["/start", "/help", "!ayuda", "hola", "menu"]:
+    if texto_lower in ["/start", "/help", "!ayuda", "hola", "menu", "help", "ayuda"]:
         menu_text = (
             "⚔️ *BIENVENIDO AL AGENTE TÁCTICO INTEGRAL GSVIEWER* ⚔️\n\n"
-            "El Bot cuenta con el 100% de los módulos de la aplicación:\n\n"
+            "Al escribir diagonal ( / ) en el chat verás el menú de autocompletado:\n\n"
             "🔹 `/unidad [Nombre]` -> Ficha HD, Tier, Rol, Slots y Crests.\n"
             "🔹 `/equipo [Nombre]` -> Stats, Cooldown y habilidades de un Objeto.\n"
             "🔹 `/foreversummons` -> Mejores Héroes para Forever Summons.\n"
@@ -183,7 +208,7 @@ def procesar_comando(chat_id, texto):
         return
 
     # BUSCAR UNIDAD
-    if texto_lower.startswith("/unidad") or texto_lower.startswith("!unidad"):
+    if texto_lower.startswith("/unidad") or texto_lower.startswith("!unidad") or texto_lower.startswith("unidad "):
         partes = texto.split(maxsplit=1)
         if len(partes) > 1:
             enviar_unidad_perfil(chat_id, partes[1].strip())
@@ -192,7 +217,7 @@ def procesar_comando(chat_id, texto):
         return
 
     # BUSCAR EQUIPAMIENTO
-    if texto_lower.startswith("/equipo") or texto_lower.startswith("!equipo") or texto_lower.startswith("/objeto"):
+    if texto_lower.startswith("/equipo") or texto_lower.startswith("!equipo") or texto_lower.startswith("/objeto") or texto_lower.startswith("equipo "):
         partes = texto.split(maxsplit=1)
         if len(partes) > 1:
             enviar_objeto_perfil(chat_id, partes[1].strip())
@@ -201,7 +226,7 @@ def procesar_comando(chat_id, texto):
         return
 
     # BUSCAR GUÍA DE MISIÓN
-    if texto_lower.startswith("/guia") or texto_lower.startswith("!guia"):
+    if texto_lower.startswith("/guia") or texto_lower.startswith("!guia") or texto_lower.startswith("guia "):
         partes = texto.split(maxsplit=1)
         if len(partes) > 1:
             enviar_guia_mision(chat_id, partes[1].strip())
@@ -210,43 +235,43 @@ def procesar_comando(chat_id, texto):
         return
 
     # FOREVER SUMMONS HÉROES
-    if texto_lower in ["/foreversummons", "/forever", "!foreversummons"]:
+    if texto_lower in ["/foreversummons", "/forever", "!foreversummons", "foreversummons"]:
         enviar_forever_summons_heroes(chat_id)
         return
 
     # FOREVER SUMMONS EQUIPAMIENTOS
-    if texto_lower in ["/foreversummons_equip", "/forever_equip", "!forever_equip"]:
+    if texto_lower in ["/foreversummons_equip", "/forever_equip", "!forever_equip", "foreversummons_equip"]:
         enviar_forever_summons_equip(chat_id)
         return
 
     # ARTS GEN GROUPS
-    if texto_lower.startswith("/artsgen") or texto_lower.startswith("!artsgen"):
+    if texto_lower.startswith("/artsgen") or texto_lower.startswith("!artsgen") or texto_lower.startswith("artsgen"):
         partes = texto.split(maxsplit=1)
         query = partes[1].strip() if len(partes) > 1 else ""
         enviar_artsgen_grupos(chat_id, query)
         return
 
     # CRESTS RECOMENDACIÓN
-    if texto_lower.startswith("/crest") or texto_lower.startswith("!crest"):
+    if texto_lower.startswith("/crest") or texto_lower.startswith("!crest") or texto_lower.startswith("crest"):
         partes = texto.split(maxsplit=1)
         query = partes[1].strip() if len(partes) > 1 else ""
         enviar_crest_recomendacion(chat_id, query)
         return
 
     # CALENDARIO CREST PALACE
-    if texto_lower in ["/crestrun", "/road", "!crestrun"]:
+    if texto_lower in ["/crestrun", "/road", "!crestrun", "crestrun"]:
         enviar_crest_palace_hoy(chat_id)
         return
 
     # TEAM BUILDER
-    if texto_lower.startswith("/teambuilder") or texto_lower.startswith("/team"):
+    if texto_lower.startswith("/teambuilder") or texto_lower.startswith("/team") or texto_lower.startswith("teambuilder"):
         partes = texto.split(maxsplit=1)
         query = partes[1].strip() if len(partes) > 1 else ""
         enviar_teambuilder(chat_id, query)
         return
 
     # SINCRONIZACIÓN AUTOMÁTICA
-    if texto_lower in ["/sync", "!sync"]:
+    if texto_lower in ["/sync", "!sync", "sync"]:
         if sync_global_info:
             try:
                 ok = sync_global_info.sync_from_global_db(DICCIONARIOS_DIR)
@@ -262,7 +287,7 @@ def procesar_comando(chat_id, texto):
         enviar_mensaje_telegram(chat_id, "⚠️ Módulo de sincronización no disponible.")
         return
 
-    enviar_mensaje_telegram(chat_id, "🤖 Comando no reconocido. Envía `/help` para ver la lista de comandos disponibles.")
+    enviar_mensaje_telegram(chat_id, "🤖 Comando no reconocido. Escribe `/` para ver la lista de comandos disponibles.")
 
 
 def enviar_unidad_perfil(chat_id, nombre): 
@@ -289,8 +314,7 @@ def enviar_unidad_perfil(chat_id, nombre):
         for idx, c in enumerate(coincidencias[:6]): # Mostrar hasta 6 opciones
             u_id = c.get("id", "")
             u_nom = c.get("nombre", "Héroe")
-            u_elem = c.get("elemento", "")
-            txt_items.append(f"{idx+1}. *{u_nom}* ({u_elem}) - Tier {c.get('tier', 'N/A')}")
+            txt_items.append(f"{idx+1}. *{u_nom}* ({c.get('elemento', '')}) - Tier {c.get('tier', 'N/A')}")
             btn_rows.append([{"text": f"⚔️ {u_nom}", "callback_data": f"selu_{u_id}"}])
 
         menu_txt = (
@@ -605,7 +629,7 @@ def enviar_artsgen_grupos(chat_id, query=""):
     if query:
         target = query.upper()
         if target in groups:
-            u_names = groups[target] # MOSTRAR LA LISTA COMPLETA COMPLETA
+            u_names = groups[target]
             msg = f"📊 *LISTA COMPLETA DE HÉROES EN GRUPO ARTS GEN: TYPE {target} ({len(u_names)} Unidades)*:\n\n" + "\n".join([f"  • {n}" for n in u_names])
             enviar_mensaje_telegram(chat_id, msg)
             return
