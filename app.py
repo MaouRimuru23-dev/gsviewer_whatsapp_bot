@@ -129,7 +129,7 @@ def buscar_unidad_info(nombre):
     for u in unidades:
         if not isinstance(u, dict): continue
         nom = u.get("nombre", "").lower()
-        nom_orig = u.get("nombreOriginal", "").lower()
+        nom_orig = u.get("nombre_original", "").lower()
         if nombre_norm in nom or nombre_norm in nom_orig:
             coincidencia = u
             break
@@ -137,14 +137,43 @@ def buscar_unidad_info(nombre):
     if not coincidencia:
         return f"🔍 No encontré a la unidad *'{nombre}'*. Verifica el nombre e intenta de nuevo."
 
-    return (
-        f"⚔️ *{coincidencia.get('nombre', 'Héroe').upper()}*\n"
-        f"🌟 *Rareza / Tier*: {coincidencia.get('rareza', '★5')} | Tier {coincidencia.get('tier', 'N/A')}\n"
-        f"🔥 *Elemento*: {coincidencia.get('elemento', 'N/A')} | *Raza*: {coincidencia.get('raza', 'N/A')}\n"
-        f"🛡️ *Rol*: {coincidencia.get('rol', 'N/A')}\n\n"
-        f"🔮 *Crestas Recomendadas*: {coincidencia.get('crestRecom', 'ATK UP, Equip CT Speed')}\n"
-        f"✨ *SuperAwakening*: {'Sí' if coincidencia.get('isSA') else 'No'}"
-    )
+    is_sa = coincidencia.get("is_sa", False) or coincidencia.get("isSA", False) or "Ascended" in coincidencia.get("tags", [])
+    raza = coincidencia.get("raza", "N/A")
+    if not raza or raza == "N/A":
+        raza = coincidencia.get("race", "Humano")
+
+    slots_list = coincidencia.get("slots", [])
+    slots_txt = [f"  • {s.get('valor', '')} {s.get('tipo', '')}" for s in slots_list if isinstance(s, dict)]
+    slots_str = "\n".join(slots_txt) if slots_txt else "  • No disponible"
+
+    sk = coincidencia.get("skillset", {}) or {}
+    skill_txt = sk.get("skill", "")
+    arts_txt = sk.get("arts", "")
+    ta_txt = sk.get("truearts", "")
+    sa_txt = sk.get("superarts", "")
+
+    resp = [
+        f"⚔️ *{coincidencia.get('nombre', 'Héroe').upper()}*",
+        f"🌟 *Rareza*: {coincidencia.get('rareza', '★5')} | *Tier*: {coincidencia.get('tier', 'N/A')}",
+        f"🔥 *Elemento*: {coincidencia.get('elemento', 'N/A')} | *Raza*: {raza}",
+        f"🛡️ *Rol*: {coincidencia.get('rol', 'N/A')}",
+        f"✨ *SuperAwakening (SA)*: {'Sí (★6 SA)' if is_sa else 'No (★5)'}",
+        "",
+        f"🎒 *Slots de Equipamiento*:\n{slots_str}",
+        "",
+        f"🔮 *Crestas Recomendadas*: {coincidencia.get('crestRecom', 'ATK UP, Equip CT Speed')}"
+    ]
+
+    if skill_txt:
+        resp.append(f"\n🗡️ *Skill*: {skill_txt.strip()}")
+    if arts_txt:
+        resp.append(f"\n🔮 *Arts*: {arts_txt.strip()}")
+    if ta_txt:
+        resp.append(f"\n⚔️ *True Arts*: {ta_txt.strip()}")
+    if sa_txt:
+        resp.append(f"\n⚡ *Super Arts*: {sa_txt.strip()}")
+
+    return "\n".join(resp)
 
 def buscar_guia_mision(query): 
     try: 
