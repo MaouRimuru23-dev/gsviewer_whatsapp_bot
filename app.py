@@ -188,7 +188,7 @@ def procesar_comando(chat_id, texto):
         if len(partes) > 1:
             enviar_unidad_perfil(chat_id, partes[1].strip())
             return
-        enviar_mensaje_telegram(chat_id, "⚠️ Uso del comando: `/unidad [Nombre]` (Ejemplo: `/unidad Shirou`)")
+        enviar_mensaje_telegram(chat_id, "⚠️ Uso del comando: `/unidad [Nombre]` (Ejemplo: `/unidad Fen` o `/unidad Shirou`)")
         return
 
     # BUSCAR EQUIPAMIENTO
@@ -229,10 +229,8 @@ def procesar_comando(chat_id, texto):
     # CRESTS RECOMENDACIÓN
     if texto_lower.startswith("/crest") or texto_lower.startswith("!crest"):
         partes = texto.split(maxsplit=1)
-        if len(partes) > 1:
-            enviar_crest_recomendacion(chat_id, partes[1].strip())
-            return
-        enviar_mensaje_telegram(chat_id, "⚠️ Uso del comando: `/crest [Nombre de Héroe]` (Ejemplo: `/crest Shirou`)")
+        query = partes[1].strip() if len(partes) > 1 else ""
+        enviar_crest_recomendacion(chat_id, query)
         return
 
     # CALENDARIO CREST PALACE
@@ -269,21 +267,46 @@ def procesar_comando(chat_id, texto):
 
 def enviar_unidad_perfil(chat_id, nombre): 
     unidades = cargar_personajes()
-    nombre_norm = nombre.lower()
-    coincidencia = None
+    nombre_norm = nombre.lower().strip()
     
+    # Manejar Coincidencias Múltiples (ej. Fen -> WH Fen, Dark Fen, Water Fen)
+    coincidencias = []
     for u in unidades:
         if not isinstance(u, dict): continue
         nom = u.get("nombre", "").lower()
         nom_orig = u.get("nombre_original", "").lower()
         if nombre_norm in nom or nombre_norm in nom_orig:
-            coincidencia = u
-            break
+            coincidencias.append(u)
 
-    if not coincidencia:
+    if not coincidencias:
         enviar_mensaje_telegram(chat_id, f"🔍 No encontré a la unidad *'{nombre}'*. Verifica el nombre e intenta de nuevo.")
         return
 
+    # Si hay MÚLTIPLES coincidencias, mostrar menú de selección
+    if len(coincidencias) > 1 and not any(nombre_norm == c.get("nombre", "").lower() for c in coincidencias):
+        btn_rows = []
+        txt_items = []
+        for idx, c in enumerate(coincidencias[:6]): # Mostrar hasta 6 opciones
+            u_id = c.get("id", "")
+            u_nom = c.get("nombre", "Héroe")
+            u_elem = c.get("elemento", "")
+            txt_items.append(f"{idx+1}. *{u_nom}* ({u_elem}) - Tier {c.get('tier', 'N/A')}")
+            btn_rows.append([{"text": f"⚔️ {u_nom}", "callback_data": f"selu_{u_id}"}])
+
+        menu_txt = (
+            f"🔍 *SE ENCONTRARON {len(coincidencias)} UNIDADES PARA '{nombre.upper()}':*\n\n" +
+            "\n".join(txt_items) + "\n\n"
+            "👇 *Toca el botón del héroe que deseas consultar*:"
+        )
+        enviar_mensaje_telegram(chat_id, menu_txt, {"inline_keyboard": btn_rows})
+        return
+
+    # Mostrar la unidad exacta seleccionada
+    coincidencia = coincidencias[0]
+    mostrar_detalle_unidad(chat_id, coincidencia)
+
+
+def mostrar_detalle_unidad(chat_id, coincidencia):
     is_sa = coincidencia.get("is_sa", False) or coincidencia.get("isSA", False) or "Ascended" in coincidencia.get("tags", [])
     raza = coincidencia.get("raza", "N/A")
     if not raza or raza == "N/A":
@@ -296,7 +319,7 @@ def enviar_unidad_perfil(chat_id, nombre):
     caption = (
         f"⚔️ *{coincidencia.get('nombre', 'Héroe').upper()}*\n"
         f"🌟 *Rareza*: {coincidencia.get('rareza', '★5')} | *Tier*: {coincidencia.get('tier', 'N/A')}\n"
-        f"💧 *Elemento*: {coincidencia.get('elemento', 'N/A')} | *Raza*: {raza}\n"
+        f"🔥 *Elemento*: {coincidencia.get('elemento', 'N/A')} | *Raza*: {raza}\n"
         f"🛡️ *Rol*: {coincidencia.get('rol', 'N/A')}\n"
         f"✨ *SuperAwakening (SA)*: {'Sí (★6 SA)' if is_sa else 'No (★5)'}\n\n"
         f"🎒 *Slots de Equipamiento*:\n{slots_str}\n\n"
@@ -328,7 +351,26 @@ def enviar_unidad_perfil(chat_id, nombre):
 def procesar_callback_query(chat_id, cb_data, cb_id):
     unidades = cargar_personajes()
     
-    # 1. SKILLSET TRADUCIDO
+    # SELECCIÓN DE UNIDAD DESDE MENÚ DE DUPLICADOS
+    if cb_data.startswith("selu_"):
+        u_id = cb_data[5:]
+        coincidencia = next((u for u in unidades if str(u.get("id")) == u_id), None)
+        if coincidencia:
+            mostrar_detalle_unidad(chat_id, coincidencia)
+            responder_callback(cb_id, "Unidad cargada")
+            return
+
+    # SELECCIÓN DE OBJETO DESDE MENÚ DE DUPLICADOS
+    if cb_data.startswith("selo_"):
+        o_id = cb_data[5:]
+        objetos = cargar_objetos()
+        coincidencia = next((o for o in objetos if str(o.get("id")) == o_id), None)
+        if coincidencia:
+            mostrar_detalle_objeto(chat_id, coincidencia)
+            responder_callback(cb_id, "Objeto cargado")
+            return
+
+    # SKILLSET TRADUCIDO
     if cb_data.startswith("sk_"):
         u_id = cb_data[3:]
         coincidencia = next((u for u in unidades if str(u.get("id")) == u_id), None)
@@ -352,7 +394,7 @@ def procesar_callback_query(chat_id, cb_data, cb_id):
             responder_callback(cb_id, "Habilidades enviadas")
             return
 
-    # 2. PASIVAS / ABILITIES
+    # PASIVAS / ABILITIES
     if cb_data.startswith("ps_"):
         u_id = cb_data[3:]
         coincidencia = next((u for u in unidades if str(u.get("id")) == u_id), None)
@@ -377,7 +419,7 @@ def procesar_callback_query(chat_id, cb_data, cb_id):
             responder_callback(cb_id, "Pasivas enviadas")
             return
 
-    # 3. ARTS GEN GROUP
+    # ARTS GEN GROUP
     if cb_data.startswith("ag_"):
         u_id = cb_data[3:]
         coincidencia = next((u for u in unidades if str(u.get("id")) == u_id), None)
@@ -389,14 +431,14 @@ def procesar_callback_query(chat_id, cb_data, cb_id):
             msg = (
                 f"📊 *GRUPO DE ARTS GEN: {coincidencia.get('nombre').upper()}*\n\n"
                 f"🏷️ *Grupo Principal*: Type {ag_type}\n"
-                f"💡 *Regla*: Las unidades del mismo Grupo Type no acumulan su recarga gradual de Arts entre sí.\n\n"
+                f"💡 *Regla*: Las unidades del mismo Grupo Type no acumulan su recarga paulatina entre sí.\n\n"
                 f"🔍 *Desglose*:\n{details_str if details_str else '  • Recarga instantánea o individual.'}"
             )
             enviar_mensaje_telegram(chat_id, msg)
             responder_callback(cb_id, "Arts Gen mostrado")
             return
 
-    # 4. CREST RECOMENDACIÓN
+    # CREST RECOMENDACIÓN
     if cb_data.startswith("cr_"):
         u_id = cb_data[3:]
         coincidencia = next((u for u in unidades if str(u.get("id")) == u_id), None)
@@ -411,8 +453,8 @@ def procesar_callback_query(chat_id, cb_data, cb_id):
 def enviar_objeto_perfil(chat_id, nombre):
     objetos = cargar_objetos()
     nombre_norm = nombre.lower().strip()
-    coincidencia = None
-
+    
+    coincidencias = []
     for o in objetos:
         if not isinstance(o, dict): continue
         nom = str(o.get("nombre", "")).lower()
@@ -420,13 +462,34 @@ def enviar_objeto_perfil(chat_id, nombre):
         o_id = str(o.get("id", "")).lower()
 
         if nombre_norm == o_id or nombre_norm in nom or nombre_norm in nom_orig:
-            coincidencia = o
-            break
+            coincidencias.append(o)
 
-    if not coincidencia:
+    if not coincidencias:
         enviar_mensaje_telegram(chat_id, f"🔍 No encontré el equipamiento *'{nombre}'*. Verifica el nombre e intenta de nuevo.")
         return
 
+    # Si hay múltiples objetos coincidentes
+    if len(coincidencias) > 1 and not any(nombre_norm == c.get("nombre", "").lower() for c in coincidencias):
+        btn_rows = []
+        txt_items = []
+        for idx, c in enumerate(coincidencias[:6]):
+            o_id = c.get("id", "")
+            o_nom = c.get("nombre", "Objeto")
+            txt_items.append(f"{idx+1}. *{o_nom}* ({c.get('tipo', 'Equip')} - {c.get('rareza', '★5')})")
+            btn_rows.append([{"text": f"🛡️ {o_nom}", "callback_data": f"selo_{o_id}"}])
+
+        menu_txt = (
+            f"🔍 *SE ENCONTRARON {len(coincidencias)} EQUIPAMIENTOS PARA '{nombre.upper()}':*\n\n" +
+            "\n".join(txt_items) + "\n\n"
+            "👇 *Toca el botón del objeto que deseas consultar*:"
+        )
+        enviar_mensaje_telegram(chat_id, menu_txt, {"inline_keyboard": btn_rows})
+        return
+
+    mostrar_detalle_objeto(chat_id, coincidencias[0])
+
+
+def mostrar_detalle_objeto(chat_id, coincidencia):
     sk_txt = coincidencia.get("habilidad") or coincidencia.get("skill") or coincidencia.get("desc") or "Aumenta atributos del personaje."
 
     caption = (
@@ -481,35 +544,50 @@ def enviar_guia_mision(chat_id, query):
 
 
 def enviar_forever_summons_heroes(chat_id):
-    unidades = cargar_personajes()
-    top_units = [u for u in unidades if isinstance(u, dict) and u.get("tier") in ["S+", "SS", "SS+"]][:10]
+    tier1_IDs = {"361", "360", "265", "286", "190", "279", "364"}
+    tier2_IDs = {"282", "291", "269", "237", "191", "207", "280", "274", "278", "261", "239", "283", "267"}
+    tier3_IDs = {"363", "284", "275", "285", "292", "119", "289", "249", "214", "268", "266", "156", "243", "192"}
 
+    unidades = cargar_personajes()
+    fs_pool = []
+    
+    for u in unidades:
+        if not isinstance(u, dict): continue
+        href = str(u.get("href", "")).rstrip("/")
+        aid = href.split("/")[-1] if href else ""
+        if aid in tier1_IDs or aid in tier2_IDs or aid in tier3_IDs or "FOREVER_POOL" in u.get("tags", []):
+            fs_pool.append(u)
+
+    if not fs_pool:
+        fs_pool = [u for u in unidades if isinstance(u, dict) and u.get("tier") in ["S+", "SS", "SS+"]]
+
+    top_units = fs_pool[:12]
     txt_list = []
     for idx, u in enumerate(top_units):
         txt_list.append(f"{idx+1}. *{u.get('nombre')}* ({u.get('elemento')}) - Tier {u.get('tier')}")
 
     msg = (
-        "🔮 *FOREVER SUMMONS: MEJORES HÉROES A CONSERVAR* 🔮\n\n"
-        "Si te sale alguna de estas unidades en la tirada diaria, se recomienda *CONSERVAR*:\n\n" +
+        "🔮 *FOREVER SUMMONS: POOL OFICIAL Y MEJORES HÉROES* 🔮\n\n"
+        "Esta es la lista definida del Forever Summons de la app. Si te sale alguna, se recomienda *CONSERVAR*:\n\n" +
         "\n".join(txt_list) + "\n\n"
-        "💡 *Consejo*: Shirou Emiya, War Hero Fen, Thetis y Houka son prioridades absolutas."
+        "💡 *Top Prioridades*: Hart (#1), War Hero Fen (#2), Kirisame (#3), Thetis, Shirou Emiya, Emperor, Hazuki."
     )
     enviar_mensaje_telegram(chat_id, msg)
 
 
 def enviar_forever_summons_equip(chat_id):
     objetos = cargar_objetos()
-    top_equips = [o for o in objetos if isinstance(o, dict) and o.get("rareza") in ["★5", "★6"]][:10]
+    top_equips = [o for o in objetos if isinstance(o, dict) and o.get("rareza") in ["★5", "★6"]][:12]
 
     txt_list = []
     for idx, o in enumerate(top_equips):
         txt_list.append(f"{idx+1}. *{o.get('nombre')}* ({o.get('tipo')}) - {o.get('rareza')}")
 
     msg = (
-        "💎 *FOREVER SUMMONS: MEJORES EQUIPAMIENTOS A CONSERVAR* 💎\n\n"
+        "💎 *FOREVER SUMMONS EQUIPAMIENTOS: POOL DEFINIDO* 💎\n\n"
         "Si te sale alguno de estos objetos en el Forever Summons de Equipos, se recomienda *CONSERVAR*:\n\n" +
         "\n".join(txt_list) + "\n\n"
-        "💡 *Prioridades*: True Flamboyance, True Izanagi, Diez Jade, Type-0, True Excalibur."
+        "💡 *Top Prioridades*: True Flamboyance, True Izanagi, Diez Jade, Type-0, True Excalibur, True Centurion."
     )
     enviar_mensaje_telegram(chat_id, msg)
 
@@ -524,27 +602,43 @@ def enviar_artsgen_grupos(chat_id, query=""):
         if ag and ag != "None":
             groups.setdefault(ag, []).append(u.get("nombre"))
 
-    if query and query.upper() in groups:
-        target_group = query.upper()
-        u_names = groups[target_group][:15]
-        msg = f"📊 *UNIDADES DEL GRUPO ARTS GEN: TYPE {target_group}*\n\n" + "\n".join([f"  • {n}" for n in u_names])
-    else:
-        summary = []
-        for g_k, g_v in sorted(groups.items()):
-            summary.append(f"• *Type {g_k}*: {len(g_v)} héroes ({', '.join(g_v[:3])}...)")
+    if query:
+        target = query.upper()
+        if target in groups:
+            u_names = groups[target] # MOSTRAR LA LISTA COMPLETA COMPLETA
+            msg = f"📊 *LISTA COMPLETA DE HÉROES EN GRUPO ARTS GEN: TYPE {target} ({len(u_names)} Unidades)*:\n\n" + "\n".join([f"  • {n}" for n in u_names])
+            enviar_mensaje_telegram(chat_id, msg)
+            return
+        else:
+            enviar_mensaje_telegram(chat_id, f"🔍 No se encontró el grupo Arts Gen *Type {target}*. Grupos disponibles: {', '.join(sorted(groups.keys()))}")
+            return
 
-        msg = (
-            "📊 *GRUPOS DE GENERACIÓN DE ARTES (ARTS GEN)* 📊\n\n"
-            "Las unidades del mismo grupo NO acumulan su recarga paulatina entre sí:\n\n" +
-            "\n".join(summary) + "\n\n"
-            "💡 *Escribe* `/artsgen B` *para ver la lista completa de ese grupo.*"
-        )
+    summary = []
+    for g_k, g_v in sorted(groups.items()):
+        summary.append(f"• *Type {g_k}* ({len(g_v)} héroes): Escribe `/artsgen {g_k}` para ver la lista completa.")
+
+    msg = (
+        "📊 *GRUPOS DE GENERACIÓN DE ARTES (ARTS GEN)* 📊\n\n"
+        "Las unidades del mismo grupo NO acumulan su recarga paulatina entre sí:\n\n" +
+        "\n".join(summary) + "\n\n"
+        "💡 *Escribe* `/artsgen B` *para ver todos los personajes de ese grupo.*"
+    )
     enviar_mensaje_telegram(chat_id, msg)
 
 
-def enviar_crest_recomendacion(chat_id, nombre):
+def enviar_crest_recomendacion(chat_id, nombre=""):
+    if not nombre:
+        msg = (
+            "🔮 *MÓDULO DE CRESTAS Y PALACIO DE CRESTAS* 🔮\n\n"
+            "Usa el comando `/crest [Nombre]` para ver las crestas óptimas de un personaje.\n"
+            "💡 *Ejemplo*: `/crest Shirou` o `/crest Fen`\n\n"
+            "Escribe `/crestrun` para ver las Dungeons de Crestas activas hoy."
+        )
+        enviar_mensaje_telegram(chat_id, msg)
+        return
+
     unidades = cargar_personajes()
-    nombre_norm = nombre.lower()
+    nombre_norm = nombre.lower().strip()
     coincidencia = next((u for u in unidades if isinstance(u, dict) and (nombre_norm in u.get("nombre", "").lower())), None)
 
     if not coincidencia:
@@ -576,9 +670,26 @@ def enviar_crest_palace_hoy(chat_id):
 
 
 def enviar_teambuilder(chat_id, query=""):
+    bosses_populares = ["Palace of Trials 30F", "Dungeon of Trials F26", "Ignis", "Wilkes", "Giant Bosses"]
+    
+    if not query:
+        msg = (
+            "⚔️ *TEAM BUILDER AUTOMÁTICO GSVIEWER* ⚔️\n\n"
+            "Escribe `/teambuilder [Boss o Misión]` para generar un escuadrón táctico sugerido.\n\n"
+            "🎯 *Jefes / Misiones Populares*:\n" +
+            "\n".join([f"  • `/team {b}`" for b in bosses_populares]) + "\n\n"
+            "🛡️ *Escuadrón General Meta*:\n"
+            "  1. Shirou Emiya (Tanque / Mitigación)\n"
+            "  2. War Hero Fen (Arts Gen / Sub-DPS)\n"
+            "  3. Summer Juno (Arts Gen / Support)\n"
+            "  4. Chloe (DPS / Breaker)"
+        )
+        enviar_mensaje_telegram(chat_id, msg)
+        return
+
     msg = (
-        f"⚔️ *TEAM BUILDER AUTOMÁTICO GSVIEWER* ⚔️\n\n"
-        f"🎯 *Formación Recomendada para {query if query else 'Misiones Generales'}*:\n\n"
+        f"⚔️ *TEAM BUILDER AUTOMÁTICO PARA: {query.upper()}* ⚔️\n\n"
+        f"🎯 *Formación Recomendada*:\n"
         f"  1. 🛡️ *Tanque / Mitigación*: Shirou Emiya / Thetis\n"
         f"  2. ⚡ *Arts Gen Principal*: War Hero Fen / Houka\n"
         f"  3. 🔮 *Arts Gen Secundario*: Summer Juno / Rosetta\n"
