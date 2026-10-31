@@ -1,109 +1,116 @@
-import os
-import json
-from flask import Flask, request, jsonify
+import os 
+import json 
+from flask import Flask, request, jsonify 
 import requests
 
-# Importar tus módulos existentes de Python
-try:
-    import sync_global_info
-except ImportError:
+# Importar tus módulos de Python existentes
+try: 
+    import sync_global_info 
+except ImportError: 
     sync_global_info = None
 
 app = Flask(__name__)
 
-# Cargar diccionario maestro actualizado
+# CONFIGURACIÓN
+TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "9193876123:AAHqmpdwNmpAvED2cdkZa9y9aspkNF3cgfE")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MAESTRO_PATH = os.path.join(BASE_DIR, "diccionarios", "diccionario_maestro_gs.json")
+GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbzauS_CZCo8Leqa--MP5nzLL58S1Is8UHeXY0ZGDzYDyislU3-1TlnROR_ZLvV8eVE8zw/exec"
 
-def cargar_datos_maestros():
-    if os.path.exists(MAESTRO_PATH):
-        with open(MAESTRO_PATH, "r", encoding="utf-8") as f:
-            return json.load(f)
+def cargar_datos_maestros(): 
+    if os.path.exists(MAESTRO_PATH): 
+        try: 
+            with open(MAESTRO_PATH, "r", encoding="utf-8") as f: 
+                return json.load(f) 
+        except Exception: 
+            return {} 
     return {}
 
 datos_gs = cargar_datos_maestros()
 
-# URL de tu Google Apps Script de Guías de Misiones
-GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbzauS_CZCo8Leqa--MP5nzLL58S1Is8UHeXY0ZGDzYDyislU3-1TlnROR_ZLvV8eVE8zw/exec"
+@app.route("/", methods=["GET"]) 
+def home(): 
+    return "🤖 GSViewer Telegram Bot Server Activo y Listo!", 200
 
-@app.route("/", methods=["GET"])
-def home():
-    return "🤖 GSViewer WhatsApp Bot Server Activo y Listo!", 200
-
-@app.route("/webhook", methods=["POST"])
-def webhook():
-    """
-    Punto de entrada que recibe los mensajes desde la API de WhatsApp (Evolution API / Baileys / Twilio)
-    """
+@app.route("/telegram-webhook", methods=["POST"]) 
+def telegram_webhook(): 
+    """Recibe los mensajes en tiempo real desde la API de Telegram""" 
     data = request.get_json() or {}
     
-    # Extraer el mensaje y el número del remitente
-    mensaje_usuario = data.get("message", "").strip()
-    numero_remitente = data.get("sender", "")
+    if "message" in data:
+        mensaje_obj = data["message"]
+        chat_id = mensaje_obj.get("chat", {}).get("id")
+        texto = mensaje_obj.get("text", "").strip()
 
-    if not mensaje_usuario:
-        return jsonify({"status": "no_message"}), 200
+        if chat_id and texto:
+            respuesta = procesar_comando(texto)
+            enviar_mensaje_telegram(chat_id, respuesta)
 
-    # Procesar el comando recibido
-    respuesta_texto = procesar_comando(mensaje_usuario)
+    return jsonify({"status": "ok"}), 200
 
-    return jsonify({
-        "to": numero_remitente,
-        "response": respuesta_texto
-    }), 200
+def enviar_mensaje_telegram(chat_id, texto): 
+    """Envía la respuesta a Telegram usando formato Markdown""" 
+    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage" 
+    payload = { 
+        "chat_id": chat_id, 
+        "text": texto, 
+        "parse_mode": "Markdown", 
+        "disable_web_page_preview": True 
+    } 
+    try: 
+        requests.post(url, json=payload, timeout=5) 
+    except Exception as e: 
+        print(f"Error enviando mensaje a Telegram: {e}")
 
-
-def procesar_comando(texto):
+def procesar_comando(texto): 
     texto_lower = texto.lower().strip()
+    
+    # Si se usa en un grupo de Telegram, los comandos vienen como /unidad@GSViewer_bot
+    if "@" in texto_lower:
+        texto_lower = texto_lower.split("@")[0]
 
-    # COMANDO 1: Ayuda / Menú Principal
-    if texto_lower in ["!ayuda", "!help", "hola", "menu"]:
+    # AYUDA / MENÚ
+    if texto_lower in ["/start", "/help", "!ayuda", "hola", "menu"]:
         return (
             "⚔️ *BIENVENIDO AL AGENTE TÁCTICO GSVIEWER* ⚔️\n\n"
-            "Puedes enviarme los siguientes comandos:\n\n"
-            "🔹 *!unidad [Nombre]* -> Información, Tier, Rol y Crestas de un Héroe.\n"
-            "🔹 *!guia [Misión o Boss]* -> Busca guías comunitarias verificadas.\n"
-            "🔹 *!equipo [Nombre]* -> Stats y rareza de un Equipamiento.\n"
-            "🔹 *!sync* -> Forzar sincronización con la Wiki oficial.\n\n"
-            "💡 *Ejemplo*: `!unidad Shirou Emiya` o `!guia Dungeon 26`"
+            "Puedes enviarme los siguientes comandos (en privado o en grupos):\n\n"
+            "🔹 `/unidad [Nombre]` -> Info, Tier, Rol y Crestas de un Héroe.\n"
+            "🔹 `/guia [Misión o Boss]` -> Guías comunitarias verificadas.\n"
+            "🔹 `/sync` -> Sincronizar con la Wiki oficial de GS.\n\n"
+            "💡 *Ejemplo*: `/unidad Shirou` o `/guia Dungeon 26`"
         )
 
-    # COMANDO 2: Buscar Unidad / Héroe
-    if texto_lower.startswith("!unidad ") or texto_lower.startswith("!heroe "):
-        nombre_buscado = texto[8:].strip()
-        return buscar_unidad_info(nombre_buscado)
+    # BUSCAR UNIDAD
+    if texto_lower.startswith("/unidad ") or texto_lower.startswith("!unidad "):
+        nombre = texto[8:].strip()
+        return buscar_unidad_info(nombre)
 
-    # COMANDO 3: Buscar Guía de Misión en Google Sheets
-    if texto_lower.startswith("!guia ") or texto_lower.startswith("!mision "):
-        mision_buscada = texto[6:].strip()
-        return buscar_guia_mision(mision_buscada)
+    # BUSCAR GUÍA DE MISIÓN
+    if texto_lower.startswith("/guia ") or texto_lower.startswith("!guia "):
+        query = texto[6:].strip()
+        return buscar_guia_mision(query)
 
-    # COMANDO 4: Sincronización Automática
-    if texto_lower == "!sync":
+    # SINCRONIZACIÓN AUTOMÁTICA
+    if texto_lower in ["/sync", "!sync"]:
         if sync_global_info:
             try:
                 sync_global_info.ejecutar_sincronizacion_completa()
                 global datos_gs
                 datos_gs = cargar_datos_maestros()
-                return "✅ *Sincronización Completa*: La base de datos de GSViewer ha sido actualizada con la Wiki oficial."
+                return "✅ *Sincronización Completa*: Base de datos actualizada con la Wiki oficial."
             except Exception as e:
-                return f"❌ Error durante la sincronización: {str(e)}"
-        return "⚠️ Módulo de sincronización no disponible en el servidor."
+                return f"❌ Error en sincronización: {str(e)}"
+        return "⚠️ Módulo de sincronización no disponible."
 
-    # Respuesta por defecto si no reconoce el comando
-    return (
-        "🤖 No entendí ese comando.\n"
-        "Escribe `!ayuda` para ver la lista de comandos disponibles."
-    )
+    return "🤖 Comando no reconocido. Envía `/help` para ver la lista de comandos disponibles."
 
-
-def buscar_unidad_info(nombre):
-    # Buscar coincidencia en el diccionario cargado por tus scripts de Python
-    unidades = datos_gs.get("personajes", [])
+def buscar_unidad_info(nombre): 
+    unidades = datos_gs.get("personajes", []) if isinstance(datos_gs, dict) else (datos_gs if isinstance(datos_gs, list) else [])
     nombre_norm = nombre.lower()
-
     coincidencia = None
+    
     for u in unidades:
+        if not isinstance(u, dict): continue
         if nombre_norm in u.get("nombre", "").lower() or nombre_norm in u.get("nombreOriginal", "").lower():
             coincidencia = u
             break
@@ -111,9 +118,8 @@ def buscar_unidad_info(nombre):
     if not coincidencia:
         return f"🔍 No encontré a la unidad *'{nombre}'*. Verifica el nombre e intenta de nuevo."
 
-    # Formatear respuesta con emojis
     return (
-        f"⚔️ *{coincidencia.get('nombre').upper()}*\n"
+        f"⚔️ *{coincidencia.get('nombre', 'Héroe').upper()}*\n"
         f"🌟 *Rareza / Tier*: {coincidencia.get('rareza', '★5')} | Tier {coincidencia.get('tier', 'N/A')}\n"
         f"🔥 *Elemento*: {coincidencia.get('elemento', 'N/A')} | *Raza*: {coincidencia.get('raza', 'N/A')}\n"
         f"🛡️ *Rol*: {coincidencia.get('rol', 'N/A')}\n\n"
@@ -121,13 +127,12 @@ def buscar_unidad_info(nombre):
         f"✨ *SuperAwakening*: {'Sí' if coincidencia.get('isSA') else 'No'}"
     )
 
-
-def buscar_guia_mision(query):
-    try:
-        res = requests.get(f"{GOOGLE_SHEETS_API_URL}?mode=approved", timeout=8)
-        guias = res.json()
+def buscar_guia_mision(query): 
+    try: 
+        res = requests.get(f"{GOOGLE_SHEETS_API_URL}?mode=approved", timeout=8) 
+        guias = res.json() 
         query_norm = query.lower()
-
+        
         filtradas = [
             g for g in guias
             if query_norm in g.get("nombreMision", "").lower()
@@ -138,7 +143,7 @@ def buscar_guia_mision(query):
         if not filtradas:
             return f"📜 No encontré guías comunitarias para *'{query}'*."
 
-        g = filtradas[0] # Tomar la primera guía coincidente
+        g = filtradas[0]
         equipo_txt = []
         for idx, member in enumerate(g.get("equipo", [])):
             u_id = member.get("idUnidad", "Héroe")
@@ -146,16 +151,15 @@ def buscar_guia_mision(query):
 
         return (
             f"⚔️ *GUÍA DE MISIÓN: {g.get('nombreMision')}*\n"
-            f"👹 *Boss*: {g.get('jefe', 'N/A')}\n"
+            f"👹 *Boss Target*: {g.get('jefe', 'N/A')}\n"
             f"👍 *Likes*: {g.get('likes', 0)} | 👎 *Dislikes*: {g.get('dislikes', 0)}\n\n"
             f"🛡️ *Formación*:\n" + "\n".join(equipo_txt) + "\n\n"
             f"📝 *Estrategia*:\n{g.get('estrategiaTexto', 'Sin estrategia escrita.')}\n\n"
             f"📱 *Abre GSViewer para ver la mesa táctica en HD.*"
         )
     except Exception as e:
-        return f"❌ Error consultando la base de guías: {str(e)}"
+        return f"❌ Error consultando guías: {str(e)}"
 
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
+if __name__ == "__main__": 
+    port = int(os.environ.get("PORT", 5000)) 
     app.run(host="0.0.0.0", port=port)
