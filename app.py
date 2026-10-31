@@ -21,30 +21,6 @@ PERSONAJES_PATH = os.path.join(DICCIONARIOS_DIR, "lista_personajes_global.json")
 OBJETOS_PATH = os.path.join(DICCIONARIOS_DIR, "lista_objetos_global.json")
 GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbzauS_CZCo8Leqa--MP5nzLL58S1Is8UHeXY0ZGDzYDyislU3-1TlnROR_ZLvV8eVE8zw/exec"
 
-def registrar_comandos_telegram():
-    """Registra la lista de comandos con diagonal (/) en el menú de autocompletado de Telegram"""
-    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/setMyCommands"
-    commands = [
-        {"command": "unidad", "description": "Info, Tier, Rol, Slots y Crestas de un Héroe"},
-        {"command": "equipo", "description": "Stats y habilidad traducida de un Equipamiento"},
-        {"command": "guia", "description": "Guías comunitarias de misiones y jefes"},
-        {"command": "foreversummons", "description": "Mejores Héroes para Forever Summons"},
-        {"command": "foreversummons_equip", "description": "Mejores Objetos para Forever Summons"},
-        {"command": "artsgen", "description": "Grupos de Arts Gen (Type A-F, EX)"},
-        {"command": "crest", "description": "Crestas recomendadas para un Héroe"},
-        {"command": "crestrun", "description": "Calendario de Dungeons de Crestas hoy"},
-        {"command": "teambuilder", "description": "Generador de Escuadrones Tácticos"},
-        {"command": "sync", "description": "Sincronizar con la Wiki oficial de GS"},
-        {"command": "help", "description": "Menú principal de ayuda y comandos"}
-    ]
-    try:
-        requests.post(url, json={"commands": commands}, timeout=5)
-    except Exception as e:
-        print(f"Error registrando comandos de Telegram: {e}")
-
-# Registrar comandos en la API de Telegram al iniciar
-registrar_comandos_telegram()
-
 def cargar_personajes(): 
     if os.path.exists(PERSONAJES_PATH): 
         try: 
@@ -63,8 +39,14 @@ def cargar_objetos():
             return [] 
     return []
 
-# Diccionario de Traducción de Términos
+# Diccionario de Traducción de Términos Extendido
 DICCIONARIO_TRADUCCION = {
+    "When Equipped by": "Cuando lo equipa",
+    "increases own DMG by": "aumenta el Daño propio en",
+    "increases HP by": "aumenta la Vida (HP) en",
+    "and negates Paralyze, Freeze, and Seal": "e inmuniza contra Parálisis, Congelación y Sellado",
+    "Increases DEF by": "Aumenta la DEF en",
+    "when unit is negating DMG": "mientras la unidad niega daño",
     "Increase own Arts by": "Aumenta sus propias Artes en",
     "Increase all Allies' Arts by": "Aumenta las Artes de todos los Aliados en",
     "Increase allies' Arts by": "Aumenta las Artes de los aliados en",
@@ -180,7 +162,6 @@ def responder_callback(cb_id, text=""):
 def procesar_comando(chat_id, texto): 
     texto_lower = texto.lower().strip()
     
-    # Manejar menciones en grupos (/unidad@GSViewer_bot Chloe -> /unidad Chloe)
     if "@" in texto_lower:
         partes = texto_lower.split()
         if partes:
@@ -191,8 +172,8 @@ def procesar_comando(chat_id, texto):
     if texto_lower in ["/start", "/help", "!ayuda", "hola", "menu", "help", "ayuda"]:
         menu_text = (
             "⚔️ *BIENVENIDO AL AGENTE TÁCTICO INTEGRAL GSVIEWER* ⚔️\n\n"
-            "Al escribir diagonal ( / ) en el chat verás el menú de autocompletado:\n\n"
-            "🔹 `/unidad [Nombre]` -> Ficha HD, Tier, Rol, Slots y Crests.\n"
+            "Escribe la diagonal ( / ) para ver la lista de comandos:\n\n"
+            "🔹 `/unidad [Nombre]` -> Ficha HD, Tier, Rol, Slots y Habilidades.\n"
             "🔹 `/equipo [Nombre]` -> Stats, Cooldown y habilidades de un Objeto.\n"
             "🔹 `/foreversummons` -> Mejores Héroes para Forever Summons.\n"
             "🔹 `/foreversummons_equip` -> Mejores Objetos para Forever Summons.\n"
@@ -294,7 +275,6 @@ def enviar_unidad_perfil(chat_id, nombre):
     unidades = cargar_personajes()
     nombre_norm = nombre.lower().strip()
     
-    # Manejar Coincidencias Múltiples (ej. Fen -> WH Fen, Dark Fen, Water Fen)
     coincidencias = []
     for u in unidades:
         if not isinstance(u, dict): continue
@@ -307,11 +287,11 @@ def enviar_unidad_perfil(chat_id, nombre):
         enviar_mensaje_telegram(chat_id, f"🔍 No encontré a la unidad *'{nombre}'*. Verifica el nombre e intenta de nuevo.")
         return
 
-    # Si hay MÚLTIPLES coincidencias, mostrar menú de selección
+    # Si hay múltiples coincidencias, mostrar menú de selección
     if len(coincidencias) > 1 and not any(nombre_norm == c.get("nombre", "").lower() for c in coincidencias):
         btn_rows = []
         txt_items = []
-        for idx, c in enumerate(coincidencias[:6]): # Mostrar hasta 6 opciones
+        for idx, c in enumerate(coincidencias[:6]):
             u_id = c.get("id", "")
             u_nom = c.get("nombre", "Héroe")
             txt_items.append(f"{idx+1}. *{u_nom}* ({c.get('elemento', '')}) - Tier {c.get('tier', 'N/A')}")
@@ -325,9 +305,7 @@ def enviar_unidad_perfil(chat_id, nombre):
         enviar_mensaje_telegram(chat_id, menu_txt, {"inline_keyboard": btn_rows})
         return
 
-    # Mostrar la unidad exacta seleccionada
-    coincidencia = coincidencias[0]
-    mostrar_detalle_unidad(chat_id, coincidencia)
+    mostrar_detalle_unidad(chat_id, coincidencias[0])
 
 
 def mostrar_detalle_unidad(chat_id, coincidencia):
@@ -348,7 +326,7 @@ def mostrar_detalle_unidad(chat_id, coincidencia):
         f"✨ *SuperAwakening (SA)*: {'Sí (★6 SA)' if is_sa else 'No (★5)'}\n\n"
         f"🎒 *Slots de Equipamiento*:\n{slots_str}\n\n"
         f"🔮 *Crestas Recomendadas*: {coincidencia.get('crestRecom', 'ATK UP, Equip CT Speed')}\n\n"
-        f"👇 *Toca los botones para ver los detalles tácticos completos*:"
+        f"👇 *Toca los botones para ver las habilidades traducidas*:"
     )
 
     u_id = coincidencia.get("id", "")
@@ -514,13 +492,46 @@ def enviar_objeto_perfil(chat_id, nombre):
 
 
 def mostrar_detalle_objeto(chat_id, coincidencia):
-    sk_txt = coincidencia.get("habilidad") or coincidencia.get("skill") or coincidencia.get("desc") or "Aumenta atributos del personaje."
+    o_id = str(coincidencia.get("id", ""))
+    raw_f = os.path.join(RAW_DATA_DIR, f"equip_{o_id}.json")
+    
+    skill_txt = ""
+    ct_val = "N/A"
+    passives_txt = []
+    stats_txt = ""
+
+    if os.path.exists(raw_f):
+        try:
+            with open(raw_f, "r", encoding="utf-8") as rf:
+                raw_eq = json.load(rf)
+                
+                # Skillset
+                sk = raw_eq.get("skillset", {}) or {}
+                if isinstance(sk, dict):
+                    skill_txt = sk.get("skill", "")
+                    ct_val = str(sk.get("ct", "N/A"))
+                
+                # Passives
+                passives = raw_eq.get("passive", {}) or {}
+                if isinstance(passives, dict):
+                    for pk, ptxt in passives.items():
+                        passives_txt.append(f"  • *{pk.capitalize()}*: {traducir_habilidad(ptxt)}")
+                
+                # Stats
+                st = raw_eq.get("stats", {}) or {}
+                if isinstance(st, dict):
+                    stats_txt = f"HP: +{st.get('hp', 0)} | ATK: +{st.get('atk', 0)} | DEF: +{st.get('def', 0)}"
+        except: pass
+
+    if not skill_txt:
+        skill_txt = coincidencia.get("habilidad") or coincidencia.get("skill") or "Aumenta atributos del personaje."
 
     caption = (
         f"🛡️ *EQUIPAMIENTO: {coincidencia.get('nombre', 'Objeto').upper()}*\n"
         f"🌟 *Rareza*: {coincidencia.get('rareza', '★5')} | *Tipo*: {coincidencia.get('tipo', 'N/A')}\n"
-        f"⏳ *CT / Cooldown*: {coincidencia.get('cooldown', coincidencia.get('ct', 'N/A'))}s\n\n"
-        f"✨ *Efecto Traducido*:\n{traducir_habilidad(sk_txt)}\n\n"
+        f"⏳ *CT / Cooldown*: {ct_val}s | *Stats*: {stats_txt if stats_txt else 'N/A'}\n\n"
+        f"✨ *Efecto Traducido*:\n{traducir_habilidad(skill_txt)}\n\n" +
+        (f"🔰 *Pasivas del Objeto*:\n" + "\n".join(passives_txt) + "\n\n" if passives_txt else "") +
         f"📍 *Fuente*: {coincidencia.get('fuente', 'Gacha / Evento / Crafting')}"
     )
 
