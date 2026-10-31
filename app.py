@@ -931,7 +931,6 @@ def enviar_teambuilder_evaluador(chat_id, query_unidades=""):
             "  • ⚡ *Overlaps de Arts Gen* (Grupos Type A-F que no apilan).\n"
             "  • 🛡️ *Estructura de Roles* (Tanque, Batería, Buffer, DPS/Breaker).\n"
             "  • 🔥 *Sinergias de Elemento y Raza*.\n"
-            "  • 🎒 *Mesa de 12 Equipamientos Sugeridos*.\n"
             "  • 📊 *Veredicto Táctico*: Qué funciona y qué NO funciona."
         )
         enviar_mensaje_telegram(chat_id, msg)
@@ -1028,21 +1027,11 @@ def enviar_teambuilder_evaluador(chat_id, query_unidades=""):
     if len(set(elementos)) == 1 and len(equipo_encontrado) >= 3:
         que_funciona.append(f"🔥 *Mono-Elemento ({elementos[0]})*: Gran sinergia para aprovechar buffers elementales del mismo elemento.")
 
-    # MESA TÁCTICA DE 12 EQUIPAMIENTOS SUGERIDOS COMO EN LA APP
-    mesa_equipos_txt = [
-        "🎒 *Mesa Táctica de 12 Equipamientos Sugeridos*:",
-        "  • *Slot 1 (Héroe 1)*: ★5 Soporte (True Flamboyance), ★5 Defensa, ★4 Curación",
-        "  • *Slot 2 (Héroe 2)*: ★5 Soporte (True Izanagi), ★5 Ataque, ★5 Soporte",
-        "  • *Slot 3 (Héroe 3)*: ★5 Soporte (Diez Jade), ★5 Defensa, ★4 Curación",
-        "  • *Slot 4 (Héroe 4)*: ★5 Ataque (Type-0), ★5 Soporte, ★5 Curación"
-    ]
-
     equipo_nombres_str = "\n".join([f"  • Posición {idx+1}: *{u.get('nombre')}* ({u.get('elemento')}) - Tier {u.get('tier', 'N/A')}" for idx, u in enumerate(equipo_encontrado)])
 
     msg = [
         f"⚔️ *ANALIZADOR DE ESQUADRÓN TEAM BUILDER ({len(equipo_encontrado)} Héroes)* ⚔️\n",
-        f"🛡️ *Composición Evaluada*:\n{equipo_nombres_str}\n",
-        "\n".join(mesa_equipos_txt) + "\n"
+        f"🛡️ *Composición Evaluada*:\n{equipo_nombres_str}\n"
     ]
 
     if no_encontrados:
