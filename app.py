@@ -25,14 +25,14 @@ GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbzauS_CZCo8Leqa
 def registrar_comandos_telegram():
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/setMyCommands"
     commands = [
-        {"command": "unidad", "description": "Info, Tier, Rol, Slots y Crestas de un Héroe"},
+        {"command": "unidad", "description": "Info, Tier, Rol, Slots y Habilidades (Dream/SA)"},
         {"command": "equipo", "description": "Stats y habilidad traducida de un Equipamiento"},
         {"command": "guia", "description": "Guías comunitarias de misiones y jefes"},
         {"command": "foreversummons", "description": "Pool Oficial y Héroes para Forever Summons"},
         {"command": "foreversummons_equip", "description": "Pool Oficial y Objetos para Forever Summons"},
         {"command": "artsgen", "description": "Grupos completos de Arts Gen (Type A-F, EX)"},
         {"command": "crest", "description": "Crestas recomendadas para un Héroe"},
-        {"command": "crestrun", "description": "Dungeon y Boss de Crestas activo HOY"},
+        {"command": "crestrun", "description": "Calendario Completo de Crest Palace & Road Map"},
         {"command": "teambuilder", "description": "Analizador de compatibilidad de 4 héroes"},
         {"command": "sync", "description": "Sincronizar con la Wiki oficial de GS"},
         {"command": "help", "description": "Menú principal de ayuda y comandos"}
@@ -79,6 +79,9 @@ DICCIONARIO_TRADUCCION = {
     "Increase own ATK & DMG Up by": "Aumenta el ATK y Daño propio en",
     "Increase own ATK by": "Aumenta el ATK propio en",
     "Increase allies' DMG Up by": "Aumenta el Daño de los aliados en",
+    "Increase own CRI rate by": "Aumenta la Tasa Crítica propia en",
+    "Increase own DMG against Earth enemies by": "Aumenta el Daño propio contra enemigos de Tierra en",
+    "when HP is 80% or above": "cuando la HP es 80% o superior",
     "PHY RES by": "Res. Física en",
     "MAG RES by": "Res. Mágica en",
     "During Unlimited Blade Works:": "Durante Unlimited Blade Works:",
@@ -110,47 +113,47 @@ def traducir_habilidad(texto):
         txt = txt.replace(en, es)
     return txt
 
-# CALENDARIO OFICIAL DE CREST PALACE DE LA APP (CrestFarmGuideScreen.kt)
+# CALENDARIO OFICIAL COMPLETO DE CREST PALACE (CrestFarmGuideScreen.kt)
 CALENDARIO_CREST_PALACE = {
     0: { # Lunes
         "boss": "Oldeus (Oblivion)", "dia": "Lunes", "dificultad": "PRO",
-        "palace": "Shrine of Oblivion (Lunes)",
+        "palace": "Shrine of Oblivion",
         "estrategia": "Solo recibe daño al ser Breakeado. Killer de Luz (400%). Inmune a Oscuridad.",
         "mvp": "Est, Duke, Platina Asc. (El DPS NO debe ser Oscuridad)."
     },
     1: { # Martes
         "boss": "Ignis (Crimson Sea)", "dia": "Martes", "dificultad": "EXTREME",
-        "palace": "Shrine of the Crimson Sea (Martes)",
+        "palace": "Shrine of the Crimson Sea",
         "estrategia": "Duran con Goblin Dagger es MVP. Stance de fuego con nukes masivos.",
         "mvp": "Duran + Goblin Dagger, Thetis, Kirisame."
     },
     2: { # Miércoles
         "boss": "Freydal (Diamond Dust)", "dia": "Miércoles", "dificultad": "EXTREME",
-        "palace": "Shrine of Diamond Dust (Miércoles)",
+        "palace": "Shrine of Diamond Dust",
         "estrategia": "Storm Mode (Alta Evasión). Reset de Skill CT cada 10s. Killer de Agua.",
         "mvp": "Hajime Saito, Shion Santa, Saitama, Okarun."
     },
     3: { # Jueves
         "boss": "Elpneumas (Eternity)", "dia": "Jueves", "dificultad": "EXTREME",
-        "palace": "Shrine of Eternity (Jueves)",
+        "palace": "Shrine of Eternity",
         "estrategia": "Se oculta bajo tierra. Killer de Humanos. Negación de Agua y Magia.",
         "mvp": "Summer Miyu, Okarun, Konpaku Youmu (Quemar con objetos)."
     },
     4: { # Viernes
         "boss": "Fosradius (Adamantine)", "dia": "Viernes", "dificultad": "PRO",
-        "palace": "Shrine of Adamantine (Viernes)",
+        "palace": "Shrine of Adamantine",
         "estrategia": "Inmune a Crítico. Faintea y drena Artes al 50%/20% HP.",
         "mvp": "OBLIGATORIO: Protección contra Parálisis + DPS Luz u Oscuridad."
     },
     5: { # Sábado
         "boss": "Subject γ-2 (Cursed Claw)", "dia": "Sábado", "dificultad": "EXTREME",
-        "palace": "Shrine of the Cursed Claw (Sábado)",
+        "palace": "Shrine of the Cursed Claw",
         "estrategia": "Requiere múltiples Breaks. Congela al 50%/25% HP.",
         "mvp": "OBLIGATORIO: Protección contra Congelación. Breaker: Chloe, Platina, Accelerator."
     },
     6: { # Domingo
         "boss": "Subject B-3 (Discordia)", "dia": "Domingo", "dificultad": "PRO",
-        "palace": "Shrine of Discordia (Domingo)",
+        "palace": "Shrine of Discordia",
         "estrategia": "Inmune a Magia. Drenaje inicial de 100 Artes. Faintea al HP más alto.",
         "mvp": "Okarun, War Hero Fen, Houka."
     }
@@ -240,13 +243,13 @@ def procesar_comando(chat_id, texto):
         menu_text = (
             "⚔️ *BIENVENIDO AL AGENTE TÁCTICO INTEGRAL GSVIEWER* ⚔️\n\n"
             "Escribe la diagonal ( / ) para desplegar el menú autocompletado:\n\n"
-            "🔹 `/unidad [Nombre]` -> Ficha HD, Tier, Rol, Slots y Habilidades.\n"
+            "🔹 `/unidad [Nombre]` -> Ficha HD, Tier, Rol, Slots y Habilidades (Dream/SA).\n"
             "🔹 `/equipo [Nombre]` -> Stats, Cooldown y habilidades traducidas.\n"
             "🔹 `/foreversummons` -> Pool Oficial de Héroes Forever Summons.\n"
             "🔹 `/foreversummons_equip` -> Pool Oficial de Objetos Forever Summons.\n"
             "🔹 `/artsgen [Grupo]` -> Lista COMPLETA por Grupos de Arts Gen (Type A-F).\n"
             "🔹 `/crest [Nombre]` -> Recomendación de Crestas para un Héroe.\n"
-            "🔹 `/crestrun` -> Dungeons y Bosses de Crestas ACTIVOS HOY.\n"
+            "🔹 `/crestrun` -> Calendario Completo de Crest Palace & Road Map.\n"
             "🔹 `/teambuilder [Héroe1, Héroe2, ...]` -> Analizador de Sinergia y Overlaps.\n"
             "🔹 `/guia [Misión]` -> Guías comunitarias de la app.\n"
             "🔹 `/sync` -> Sincronización en vivo con la Wiki oficial.\n\n"
@@ -255,7 +258,7 @@ def procesar_comando(chat_id, texto):
         enviar_mensaje_telegram(chat_id, menu_text)
         return
 
-    # CALENDARIO CREST PALACE Y ROAD MAP HOY (Específico antes de /crest)
+    # CALENDARIO CREST PALACE Y ROAD MAP HOY
     if texto_lower in ["/crestrun", "/road", "!crestrun", "crestrun"]:
         enviar_crest_palace_hoy(chat_id)
         return
@@ -377,6 +380,8 @@ def enviar_unidad_perfil(chat_id, nombre):
 
 def mostrar_detalle_unidad(chat_id, coincidencia):
     is_sa = coincidencia.get("is_sa", False) or coincidencia.get("isSA", False) or "Ascended" in coincidencia.get("tags", [])
+    has_dream = coincidencia.get("has_dream", False) or "Dream Awakening" in coincidencia.get("tags", [])
+    
     raza = coincidencia.get("raza", "N/A")
     if not raza or raza == "N/A":
         raza = coincidencia.get("race", "Humano")
@@ -385,23 +390,25 @@ def mostrar_detalle_unidad(chat_id, coincidencia):
     slots_txt = [f"  • {s.get('valor', '')} {s.get('tipo', '')}" for s in slots_list if isinstance(s, dict)]
     slots_str = "\n".join(slots_txt) if slots_txt else "  • No disponible"
 
+    type_evo = "✨ SuperAwakening (★6 SA)" if is_sa else ("🌟 Dream Awakening (Evolución de Sueño)" if has_dream else "⭐ Awoken / ★5 Base")
+
     caption = (
         f"⚔️ *{coincidencia.get('nombre', 'Héroe').upper()}*\n"
         f"🌟 *Rareza*: {coincidencia.get('rareza', '★5')} | *Tier*: {coincidencia.get('tier', 'N/A')}\n"
         f"🔥 *Elemento*: {coincidencia.get('elemento', 'N/A')} | *Raza*: {raza}\n"
         f"🛡️ *Rol*: {coincidencia.get('rol', 'N/A')}\n"
-        f"✨ *SuperAwakening (SA)*: {'Sí (★6 SA)' if is_sa else 'No (★5)'}\n\n"
+        f"🔮 *Evolución*: {type_evo}\n\n"
         f"🎒 *Slots de Equipamiento*:\n{slots_str}\n\n"
         f"🔮 *Crestas Recomendadas*: {coincidencia.get('crestRecom', 'ATK UP, Equip CT Speed')}\n\n"
-        f"👇 *Toca los botones para ver los detalles tácticos completos*:"
+        f"👇 *Toca los botones para ver los kits traducidos completos*:"
     )
 
     u_id = coincidencia.get("id", "")
     buttons = {
         "inline_keyboard": [
             [
-                {"text": "🗡️ Skill Set Traducido", "callback_data": f"sk_{u_id}"},
-                {"text": "🔰 Pasivas", "callback_data": f"ps_{u_id}"}
+                {"text": "🗡️ Skill Set (Arts/SA/Cross)", "callback_data": f"sk_{u_id}"},
+                {"text": "🔰 Pasivas & Dream", "callback_data": f"ps_{u_id}"}
             ],
             [
                 {"text": "📊 Arts Gen Group", "callback_data": f"ag_{u_id}"},
@@ -439,36 +446,56 @@ def procesar_callback_query(chat_id, cb_data, cb_id):
             responder_callback(cb_id, "Objeto cargado")
             return
 
-    # SKILLSET TRADUCIDO
+    # SKILLSET TRADUCIDO COMPLETO (Arts, SuperArts, CrossArts, PhantomBullet, Protagonize)
     if cb_data.startswith("sk_"):
         u_id = cb_data[3:]
         coincidencia = next((u for u in unidades if str(u.get("id")) == u_id), None)
         if coincidencia:
             sk = coincidencia.get("skillset", {}) or {}
+            
+            raw_file = os.path.join(RAW_DATA_DIR, f"unit_{u_id}.json")
+            if os.path.exists(raw_file):
+                try:
+                    with open(raw_file, "r", encoding="utf-8") as rf:
+                        raw_u = json.load(rf)
+                        sk = raw_u.get("skillset", sk)
+                except: pass
+
             skill_txt = traducir_habilidad(sk.get("skill", ""))
             arts_txt = traducir_habilidad(sk.get("arts", ""))
             ta_txt = traducir_habilidad(sk.get("truearts", ""))
             sa_txt = traducir_habilidad(sk.get("superarts", ""))
+            cross_txt = traducir_habilidad(sk.get("crossarts", ""))
+            pb_txt = traducir_habilidad(sk.get("phantombullet", ""))
+            prot_txt = traducir_habilidad(sk.get("protagonize", ""))
 
             skills_formatted = [
-                f"⚔️ *HABILIDADES TRADUCIDAS: {coincidencia.get('nombre').upper()}*\n",
+                f"⚔️ *KIT DE HABILIDADES TRADUCIDO: {coincidencia.get('nombre').upper()}*\n",
                 f"🗡️ *Skill (CT)*:\n{skill_txt}\n",
                 f"🔮 *Arts*:\n{arts_txt}\n",
                 f"⚔️ *True Arts*:\n{ta_txt}\n"
             ]
             if sa_txt:
-                skills_formatted.append(f"⚡ *Super Arts*:\n{sa_txt}\n")
+                skills_formatted.append(f"⚡ *Super Arts (SA)*:\n{sa_txt}\n")
+            if cross_txt:
+                skills_formatted.append(f"❌ *Cross Arts*:\n{cross_txt}\n")
+            if pb_txt:
+                skills_formatted.append(f"💥 *Phantom Bullet*:\n{pb_txt}\n")
+            if prot_txt:
+                skills_formatted.append(f"🌟 *Protagonize Skill*:\n{prot_txt}\n")
 
             enviar_mensaje_telegram(chat_id, "\n".join(skills_formatted))
-            responder_callback(cb_id, "Habilidades enviadas")
+            responder_callback(cb_id, "Kit completo enviado")
             return
 
-    # PASIVAS / ABILITIES
+    # PASIVAS Y DREAM AWAKENING
     if cb_data.startswith("ps_"):
         u_id = cb_data[3:]
         coincidencia = next((u for u in unidades if str(u.get("id")) == u_id), None)
         if coincidencia:
             passives_txt = []
+            dream_txt = []
+            
             raw_file = os.path.join(RAW_DATA_DIR, f"unit_{u_id}.json")
             if os.path.exists(raw_file):
                 try:
@@ -477,15 +504,28 @@ def procesar_callback_query(chat_id, cb_data, cb_id):
                         passives = raw_u.get("passive", {})
                         if isinstance(passives, dict):
                             for pk, ptxt in passives.items():
-                                passives_txt.append(f"  • *{pk.capitalize()}*: {traducir_habilidad(ptxt)}")
+                                if ptxt: passives_txt.append(f"  • *{pk.capitalize()}*: {traducir_habilidad(ptxt)}")
+
+                        # Extraer Habilidades de Dream Awakening
+                        dream_data = raw_u.get("dream") or raw_u.get("dreamGL") or raw_u.get("dreamJP")
+                        if isinstance(dream_data, dict):
+                            for d_path, d_info in dream_data.items():
+                                if isinstance(d_info, dict):
+                                    d_pass = d_info.get("passive", {})
+                                    for dpk, dptxt in d_pass.items():
+                                        if dptxt: dream_txt.append(f"  • *Evolución de Sueño ({d_path.capitalize()})*: {traducir_habilidad(dptxt)}")
                 except: pass
 
-            msg = (
-                f"🔰 *PASIVAS Y HAB. PASIVAS: {coincidencia.get('nombre').upper()}*\n\n" +
-                ("\n\n".join(passives_txt) if passives_txt else "  • Habilidades pasivas estándar de la unidad.")
-            )
-            enviar_mensaje_telegram(chat_id, msg)
-            responder_callback(cb_id, "Pasivas enviadas")
+            msg = [f"🔰 *PASIVAS Y DREAM AWAKENING: {coincidencia.get('nombre').upper()}*\n"]
+            if passives_txt:
+                msg.append("*Habilidades Pasivas*:\n" + "\n".join(passives_txt) + "\n")
+            if dream_txt:
+                msg.append("🌟 *Ramas de Dream Awakening (Evolución de Sueño)*:\n" + "\n".join(dream_txt) + "\n")
+            if not passives_txt and not dream_txt:
+                msg.append("  • Habilidades pasivas estándar de la unidad.")
+
+            enviar_mensaje_telegram(chat_id, "\n".join(msg))
+            responder_callback(cb_id, "Pasivas y Dream enviadas")
             return
 
     # ARTS GEN GROUP
@@ -623,7 +663,6 @@ def enviar_guia_mision(chat_id, query):
         ]
 
         if not filtradas:
-            # FALLBACK SOLICITADO: Mensaje amigable cuando no existe la guía
             msg_fallback = (
                 f"📜 *No se encontraron guías registradas para '{query}'.*\n\n"
                 f"💡 *¡Aporta tu granito de arena a la comunidad y sube tu guía en la app de GSViewer!*"
@@ -638,11 +677,9 @@ def enviar_guia_mision(chat_id, query):
 
         for idx, member in enumerate(g.get("equipo", [])):
             u_id = str(member.get("idUnidad", "Héroe"))
-            # Mapear ID de unidad a su Nombre Real en la app
             u_match = next((u for u in unidades_db if str(u.get("id")) == u_id or str(u.get("nombre")).lower() == u_id.lower()), None)
             u_nombre = u_match.get("nombre") if u_match else f"Héroe #{u_id}"
 
-            # Mapear IDs de equipamiento a Nombres Reales
             eq_names = []
             for eq_id in member.get("equipos", []):
                 if not eq_id: continue
@@ -774,7 +811,7 @@ def enviar_crest_recomendacion(chat_id, nombre=""):
             "🔮 *MÓDULO DE CRESTAS Y PALACIO DE CRESTAS* 🔮\n\n"
             "Usa el comando `/crest [Nombre]` para ver las crestas óptimas de un personaje.\n"
             "💡 *Ejemplo*: `/crest Shirou` o `/crest Fen`\n\n"
-            "Escribe `/crestrun` para ver las Dungeons de Crestas activas HOY."
+            "Escribe `/crestrun` para ver el Calendario Completo de Crest Palace."
         )
         enviar_mensaje_telegram(chat_id, msg)
         return
@@ -787,7 +824,6 @@ def enviar_crest_recomendacion(chat_id, nombre=""):
         enviar_mensaje_telegram(chat_id, f"🔍 No encontré al héroe *'{nombre}'*.")
         return
 
-    # Si hay múltiples
     if len(coincidencias) > 1 and not any(nombre_norm == c.get("nombre", "").lower() for c in coincidencias):
         btn_rows = []
         txt_items = []
@@ -819,16 +855,26 @@ def enviar_crest_recomendacion(chat_id, nombre=""):
 
 
 def enviar_crest_palace_hoy(chat_id):
-    weekday = datetime.now().weekday()
-    info_today = CALENDARIO_CREST_PALACE.get(weekday, CALENDARIO_CREST_PALACE[0])
+    weekday_today = datetime.now().weekday()
+    
+    # MOSTRAR LA ROTACIÓN SEMANAL COMPLETA MENCIONANDO EL DÍA DEDICADO
+    rotacion_txt = []
+    for day_num in range(7):
+        info = CALENDARIO_CREST_PALACE[day_num]
+        es_hoy = (day_num == weekday_today)
+        prefix = "👉 *HOY* -> " if es_hoy else "• "
+        rotacion_txt.append(f"{prefix}*{info['dia']}*: {info['boss']} ({info['dificultad']})")
+
+    info_today = CALENDARIO_CREST_PALACE.get(weekday_today, CALENDARIO_CREST_PALACE[0])
 
     msg = (
-        f"🏰 *CALENDARIO TÁCTICO CREST PALACE: DÍA {info_today['dia'].upper()}* 🏰\n\n"
-        f"📍 *Palacio Activo Hoy*: {info_today['palace']}\n"
-        f"⚔️ *Jefe Activo*: {info_today['boss']}\n"
-        f"📊 *Dificultad*: {info_today['dificultad']}\n\n"
-        f"📝 *Estrategia Técnica*:\n{info_today['estrategia']}\n\n"
-        f"🌟 *MVP / Héroes Recomendados*:\n{info_today['mvp']}\n\n"
+        f"🏰 *CALENDARIO DE ROTACIÓN SEMANAL DE CREST PALACE* 🏰\n\n" +
+        "\n".join(rotacion_txt) + "\n\n"
+        f"⚔️ *JEFE Y PALACIO RECOMENDADO HOY ({info_today['dia'].upper()})*:\n"
+        f"📍 *Palacio*: {info_today['palace']}\n"
+        f"👹 *Boss*: {info_today['boss']} [{info_today['dificultad']}]\n"
+        f"📝 *Estrategia*: {info_today['estrategia']}\n"
+        f"🌟 *MVP*: {info_today['mvp']}\n\n"
         f"💡 *Regla del Líder*: La unidad en la posición 1 (Líder) es quien recibe el drop de la Cresta al ganar."
     )
     enviar_mensaje_telegram(chat_id, msg)
@@ -871,7 +917,6 @@ def enviar_teambuilder_evaluador(chat_id, query_unidades=""):
             if exact:
                 if exact not in equipo_encontrado: equipo_encontrado.append(exact)
             else:
-                # Si hay ambigüedad, tomar el primer match y avisar
                 equipo_encontrado.append(matches[0])
         else:
             no_encontrados.append(nom_input)
