@@ -444,6 +444,26 @@ def mostrar_detalle_unidad(chat_id, coincidencia):
 def procesar_callback_query(chat_id, cb_data, cb_id):
     unidades = cargar_personajes()
     
+    # REEMPLAZO INTERACTIVO EN TEAMBUILDER
+    if cb_data.startswith("tbswap~"):
+        parts = cb_data.split("~")
+        if len(parts) >= 4:
+            u_id = parts[1]
+            orig_term = parts[2]
+            orig_query = parts[3]
+
+            coincidencia = next((u for u in unidades if str(u.get("id")) == u_id), None)
+            if coincidencia:
+                new_name = coincidencia.get("nombre")
+                nombres_list = [n.strip() for n in orig_query.split(",")]
+                for idx, item in enumerate(nombres_list):
+                    if item.lower() == orig_term.lower():
+                        nombres_list[idx] = new_name
+                updated_query = ", ".join(nombres_list)
+                enviar_teambuilder_evaluador(chat_id, updated_query)
+                responder_callback(cb_id, f"Escuadra actualizada con {new_name}")
+                return
+
     # SELECCIÓN DE UNIDAD DESDE MENÚ DE DUPLICADOS
     if cb_data.startswith("selu_"):
         u_id = cb_data[5:]
@@ -939,18 +959,14 @@ def enviar_teambuilder_evaluador(chat_id, query_unidades=""):
         else:
             no_encontrados.append(nom_input)
 
-    if not equipo_encontrado:
-        enviar_mensaje_telegram(chat_id, f"🔍 No encontré a ninguno de los héroes especificados: *{', '.join(no_encontrados)}*.")
-        return
-
-    # Si hay nombres ambiguos, generar botones para refinar
+    # Si hay nombres ambiguos, generar botones para re-evaluar la escuadra
     btn_rows = []
     if ambiguos:
         for name_term, match_list in ambiguos[:2]:
             for m in match_list[:3]:
                 u_id = m.get("id", "")
                 u_nom = m.get("nombre", "Héroe")
-                btn_rows.append([{"text": f"⚔️ Cambiar a: {u_nom}", "callback_data": f"selu_{u_id}"}])
+                btn_rows.append([{"text": f"⚔️ Cambiar a: {u_nom}", "callback_data": f"tbswap~{u_id}~{name_term}~{query_unidades}"}])
 
     que_funciona = []
     que_no_funciona = []
