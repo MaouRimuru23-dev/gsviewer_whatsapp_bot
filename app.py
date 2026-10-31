@@ -32,7 +32,7 @@ def registrar_comandos_telegram():
         {"command": "foreversummons_equip", "description": "Pool Oficial y Objetos para Forever Summons"},
         {"command": "artsgen", "description": "Grupos completos de Arts Gen (Type A-F, EX)"},
         {"command": "crest", "description": "Crestas recomendadas para un Héroe"},
-        {"command": "crestrun", "description": "Calendario Completo de Crest Palace & Road Map"},
+        {"command": "crestrun", "description": "Palacios de Crestas & Summoner's Road Activos Hoy"},
         {"command": "teambuilder", "description": "Analizador de compatibilidad de 4 héroes"},
         {"command": "sync", "description": "Sincronizar con la Wiki oficial de GS"},
         {"command": "help", "description": "Menú principal de ayuda y comandos"}
@@ -62,7 +62,7 @@ def cargar_objetos():
             return [] 
     return []
 
-# Diccionario de Traducción de Términos
+# Diccionario de Traducción
 DICCIONARIO_TRADUCCION = {
     "When Equipped by": "Cuando lo equipa",
     "increases own DMG by": "aumenta el Daño propio en",
@@ -113,49 +113,66 @@ def traducir_habilidad(texto):
         txt = txt.replace(en, es)
     return txt
 
-# CALENDARIO OFICIAL COMPLETO DE CREST PALACE (CrestFarmGuideScreen.kt)
-CALENDARIO_CREST_PALACE = {
+# CALENDARIO COMPLETO Y EXACTO DE CREST PALACES Y SUMMONER'S ROAD DE LA APP (MissionsRepository.kt)
+CALENDARIO_COMPLETO_PALACES = {
     0: { # Lunes
-        "boss": "Oldeus (Oblivion)", "dia": "Lunes", "dificultad": "PRO",
-        "palace": "Shrine of Oblivion",
-        "estrategia": "Solo recibe daño al ser Breakeado. Killer de Luz (400%). Inmune a Oscuridad.",
-        "mvp": "Est, Duke, Platina Asc. (El DPS NO debe ser Oscuridad)."
+        "dia": "Lunes",
+        "palaces": [
+            {"nombre": "Shrine of Oblivion", "boss": "Oldeus", "dif": "PRO", "mech": "Solo recibe daño en Break. Killer de Luz (400%). Inmune a Oscuridad.", "mvp": "Est, Duke, Platina Asc."},
+            {"nombre": "Shrine of Perdition", "boss": "Valzandeth", "dif": "PRO", "mech": "Grangarrod (Veneno) y Cyclops (Ceguera). Inmune a Reflejo.", "mvp": "Taunt Tank, Limpieza de Estados."}
+        ],
+        "road": "SR Oscuridad (Sinflow Cavern)"
     },
     1: { # Martes
-        "boss": "Ignis (Crimson Sea)", "dia": "Martes", "dificultad": "EXTREME",
-        "palace": "Shrine of the Crimson Sea",
-        "estrategia": "Duran con Goblin Dagger es MVP. Stance de fuego con nukes masivos.",
-        "mvp": "Duran + Goblin Dagger, Thetis, Kirisame."
+        "dia": "Martes",
+        "palaces": [
+            {"nombre": "Shrine of the Crimson Sea", "boss": "Ignis", "dif": "EXTREME", "mech": "Stance de fuego. Nuke masivo en cada barra de HP.", "mvp": "Duran + Goblin Dagger, Thetis, Kirisame"},
+            {"nombre": "Shrine of Burning Chains", "boss": "Ifrit", "dif": "PRO", "mech": "Nuke inicial (reduce HP a 15%). Quemadura pesada.", "mvp": "Cura Quemadura, Congelación"},
+            {"nombre": "Shrine of Cinderplume (Nova)", "boss": "Flogassa", "dif": "NOVA", "mech": "Thresholds letales. Anti-Taunt y Anti-Curación.", "mvp": "Shirou, Sanstone, HK Roy"}
+        ],
+        "road": "SR Fuego (Flametail Mountain)"
     },
     2: { # Miércoles
-        "boss": "Freydal (Diamond Dust)", "dia": "Miércoles", "dificultad": "EXTREME",
-        "palace": "Shrine of Diamond Dust",
-        "estrategia": "Storm Mode (Alta Evasión). Reset de Skill CT cada 10s. Killer de Agua.",
-        "mvp": "Hajime Saito, Shion Santa, Saitama, Okarun."
+        "dia": "Miércoles",
+        "palaces": [
+            {"nombre": "Shrine of Diamond Dust", "boss": "Freydal", "dif": "EXTREME", "mech": "Storm Mode (Alta Evasión). Reset de Skill CT.", "mvp": "Hajime Saito, Shion Santa, Saitama, Okarun"},
+            {"nombre": "Shrine of Azul Knight", "boss": "Palamicia", "dif": "PRO", "mech": "Counter Stance. Killer de Humanos/Dioses.", "mvp": "Enfermedad, Arts/True Arts, No-Humano"},
+            {"nombre": "Shrine of Frigidity (Nova)", "boss": "Aerugraxes", "dif": "NOVA", "mech": "Shield Killer. Congelación masiva y Evasión.", "mvp": "DR, Precisión Up, Shadow/Summer Chloe"}
+        ],
+        "road": "SR Agua (Frostsprite Tundra)"
     },
     3: { # Jueves
-        "boss": "Elpneumas (Eternity)", "dia": "Jueves", "dificultad": "EXTREME",
-        "palace": "Shrine of Eternity",
-        "estrategia": "Se oculta bajo tierra. Killer de Humanos. Negación de Agua y Magia.",
-        "mvp": "Summer Miyu, Okarun, Konpaku Youmu (Quemar con objetos)."
+        "dia": "Jueves",
+        "palaces": [
+            {"nombre": "Shrine of Eternity", "boss": "Elpneumas", "dif": "EXTREME", "mech": "Se oculta bajo tierra. Negación de Agua y Magia.", "mvp": "Summer Miyu, Okarun, Konpaku Youmu"},
+            {"nombre": "Shrine of Aberration", "boss": "Goldola", "dif": "PRO", "mech": "Veneno y Enfermedad pesados. Killer de Magia.", "mvp": "Limpieza de Estados, Físico, Fuego"}
+        ],
+        "road": "SR Tierra (Onyx Wood)"
     },
     4: { # Viernes
-        "boss": "Fosradius (Adamantine)", "dia": "Viernes", "dificultad": "PRO",
-        "palace": "Shrine of Adamantine",
-        "estrategia": "Inmune a Crítico. Faintea y drena Artes al 50%/20% HP.",
-        "mvp": "OBLIGATORIO: Protección contra Parálisis + DPS Luz u Oscuridad."
+        "dia": "Viernes",
+        "palaces": [
+            {"nombre": "Shrine of Adamantine", "boss": "Fosradius", "dif": "PRO", "mech": "Inmune a Crítico (400% RES). Faintea y drena Artes.", "mvp": "Protección contra Parálisis + DPS Luz/Oscuridad"},
+            {"nombre": "Shrine of Caliginosity (Nova)", "boss": "Dark Celia", "dif": "NOVA", "mech": "W3 Regulus, W4 Fina, Boss TA 'Endless' y Nuke Final.", "mvp": "Shirou, Chloe, Blessed Necklace"}
+        ],
+        "road": "SR Luz (Eternaglint Summit)"
     },
     5: { # Sábado
-        "boss": "Subject γ-2 (Cursed Claw)", "dia": "Sábado", "dificultad": "EXTREME",
-        "palace": "Shrine of the Cursed Claw",
-        "estrategia": "Requiere múltiples Breaks. Congela al 50%/25% HP.",
-        "mvp": "OBLIGATORIO: Protección contra Congelación. Breaker: Chloe, Platina, Accelerator."
+        "dia": "Sábado",
+        "palaces": [
+            {"nombre": "Shrine of the Cursed Claw", "boss": "Subject γ-2", "dif": "EXTREME", "mech": "Requiere múltiples Breaks. Congela al 50%/25% HP.", "mvp": "Chloe, Platina, Accelerator"},
+            {"nombre": "Shrine of Whirlwind", "boss": "Belgiras", "dif": "PRO", "mech": "Daño capado a 1 si no está Envenenado.", "mvp": "Veneno Mandatorio, Fuego"}
+        ],
+        "road": "SR Celestial & Todos los Cursos Abiertos"
     },
     6: { # Domingo
-        "boss": "Subject B-3 (Discordia)", "dia": "Domingo", "dificultad": "PRO",
-        "palace": "Shrine of Discordia",
-        "estrategia": "Inmune a Magia. Drenaje inicial de 100 Artes. Faintea al HP más alto.",
-        "mvp": "Okarun, War Hero Fen, Houka."
+        "dia": "Domingo",
+        "palaces": [
+            {"nombre": "Shrine of Discordia", "boss": "Subject B-3", "dif": "PRO", "mech": "Inmune a Magia (Daño 1). Grab / Faint a la unidad con más HP.", "mvp": "Okarun, War Hero Fen, Houka"},
+            {"nombre": "Shrine of Tribulation", "boss": "Za'remnah", "dif": "PRO", "mech": "Phantasm Lock (Sella unidad hasta ser Breakeado).", "mvp": "Breaker, Ignorar DEF, Precisión Up"},
+            {"nombre": "Shrine of Sagacity (Nova)", "boss": "Fongion", "dif": "NOVA", "mech": "Invulnerable a 50% HP hasta Break. Nuke masivo final.", "mvp": "Pencilgon, Chloe, Gamagori, Albedo"}
+        ],
+        "road": "SR Todos los Cursos Abiertos (Tierra, Fuego, Agua, Luz, Oscuridad)"
     }
 }
 
@@ -249,7 +266,7 @@ def procesar_comando(chat_id, texto):
             "🔹 `/foreversummons_equip` -> Pool Oficial de Objetos Forever Summons.\n"
             "🔹 `/artsgen [Grupo]` -> Lista COMPLETA por Grupos de Arts Gen (Type A-F).\n"
             "🔹 `/crest [Nombre]` -> Recomendación de Crestas para un Héroe.\n"
-            "🔹 `/crestrun` -> Calendario Completo de Crest Palace & Road Map.\n"
+            "🔹 `/crestrun` -> Dungeons de Crestas & Summoner's Road Activos HOY.\n"
             "🔹 `/teambuilder [Héroe1, Héroe2, ...]` -> Analizador de Sinergia y Overlaps.\n"
             "🔹 `/guia [Misión]` -> Guías comunitarias de la app.\n"
             "🔹 `/sync` -> Sincronización en vivo con la Wiki oficial.\n\n"
@@ -854,27 +871,26 @@ def enviar_crest_recomendacion(chat_id, nombre=""):
 
 
 def enviar_crest_palace_hoy(chat_id):
-    # DÍA DE LA SEMANA EXACTO EN HORA MÉXICO/LATAM (UTC-6)
     tz_latam = timezone(timedelta(hours=-6))
     weekday_today = datetime.now(tz_latam).weekday()
     
-    rotacion_txt = []
-    for day_num in range(7):
-        info = CALENDARIO_CREST_PALACE[day_num]
-        es_hoy = (day_num == weekday_today)
-        prefix = "👉 *HOY* -> " if es_hoy else "• "
-        rotacion_txt.append(f"{prefix}*{info['dia']}*: {info['boss']} ({info['dificultad']})")
+    info_today = CALENDARIO_COMPLETO_PALACES.get(weekday_today, CALENDARIO_COMPLETO_PALACES[0])
 
-    info_today = CALENDARIO_CREST_PALACE.get(weekday_today, CALENDARIO_CREST_PALACE[0])
+    palaces_list_txt = []
+    for p in info_today["palaces"]:
+        palaces_list_txt.append(
+            f"📍 *Palacio*: {p['nombre']} [{p['dif']}]\n"
+            f"👹 *Boss*: {p['boss']}\n"
+            f"📝 *Mecánica*: {p['mech']}\n"
+            f"🌟 *MVP*: {p['mvp']}\n"
+        )
 
     msg = (
-        f"🏰 *CALENDARIO DE ROTACIÓN SEMANAL DE CREST PALACE (HORARIO LATAM/UTC-6)* 🏰\n\n" +
-        "\n".join(rotacion_txt) + "\n\n"
-        f"⚔️ *JEFE Y PALACIO RECOMENDADO HOY ({info_today['dia'].upper()})*:\n"
-        f"📍 *Palacio*: {info_today['palace']}\n"
-        f"👹 *Boss*: {info_today['boss']} [{info_today['dificultad']}]\n"
-        f"📝 *Estrategia*: {info_today['estrategia']}\n"
-        f"🌟 *MVP*: {info_today['mvp']}\n\n"
+        f"🏰 *PALACIOS DE CRESTAS & SUMMONER'S ROAD ACTIVOS HOY ({info_today['dia'].upper()})* 🏰\n\n"
+        f"⚔️ *PALACIOS DE CRESTAS ACTIVOS HOY*:\n" +
+        "\n".join(palaces_list_txt) + "\n"
+        f"🛤️ *SUMMONER'S ROAD ACTIVO HOY*:\n"
+        f"  • *{info_today['road']}*\n\n"
         f"💡 *Regla del Líder*: La unidad en la posición 1 (Líder) es quien recibe el drop de la Cresta al ganar."
     )
     enviar_mensaje_telegram(chat_id, msg)
@@ -919,29 +935,22 @@ def enviar_teambuilder_evaluador(chat_id, query_unidades=""):
                 if exact not in equipo_encontrado: equipo_encontrado.append(exact)
             else:
                 ambiguos.append((nom_input, matches))
-                equipo_encontrado.append(matches[0]) # Usar el primer match representativo
+                equipo_encontrado.append(matches[0])
         else:
             no_encontrados.append(nom_input)
-
-    # Si hay nombres ambiguos en el TeamBuilder, ofrecer botones interactivos
-    if ambiguos:
-        btn_rows = []
-        amb_txts = []
-        for name_term, match_list in ambiguos[:2]:
-            amb_txts.append(f"🔍 *Coincidencias para '{name_term}'*:")
-            for m in match_list[:4]:
-                u_id = m.get("id", "")
-                u_nom = m.get("nombre", "Héroe")
-                amb_txts.append(f"  • {u_nom} ({m.get('elemento')})")
-                btn_rows.append([{"text": f"⚔️ {u_nom}", "callback_data": f"selu_{u_id}"}])
-
-        note_amb = "\n\n💡 *Si querías una variante específica, toca su botón arriba.*"
-    else:
-        note_amb = ""
 
     if not equipo_encontrado:
         enviar_mensaje_telegram(chat_id, f"🔍 No encontré a ninguno de los héroes especificados: *{', '.join(no_encontrados)}*.")
         return
+
+    # Si hay nombres ambiguos, generar botones para refinar
+    btn_rows = []
+    if ambiguos:
+        for name_term, match_list in ambiguos[:2]:
+            for m in match_list[:3]:
+                u_id = m.get("id", "")
+                u_nom = m.get("nombre", "Héroe")
+                btn_rows.append([{"text": f"⚔️ Cambiar a: {u_nom}", "callback_data": f"selu_{u_id}"}])
 
     que_funciona = []
     que_no_funciona = []
@@ -1025,10 +1034,8 @@ def enviar_teambuilder_evaluador(chat_id, query_unidades=""):
     else:
         msg.append("  • ¡Excelente! No se detectaron conflictos de Arts Gen ni faltas de roles principales.")
 
-    if note_amb:
-        msg.append(note_amb)
-
-    enviar_mensaje_telegram(chat_id, "\n".join(msg))
+    reply_markup = {"inline_keyboard": btn_rows} if btn_rows else None
+    enviar_mensaje_telegram(chat_id, "\n".join(msg), reply_markup)
 
 
 if __name__ == "__main__": 
